@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "node.js/무제 파일.md",
+                "file": "node.js/javaScript.md",
                 "mode": "source",
                 "source": false
               }
@@ -85,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "node.js/무제 파일.md",
+                "file": "node.js/javaScript.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "node.js/무제 파일.md",
+                "file": "node.js/javaScript.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "node.js/무제 파일.md"
+                "file": "node.js/javaScript.md"
               }
             }
           }
@@ -149,7 +149,7 @@
   "active": "b71a4ad9e0b8aed9",
   "lastOpenFiles": [
     "무제 파일.canvas",
-    "node.js/무제 파일.md",
+    "node.js/javaScript.md",
     "node.js",
     "Obisidian practice/깃 원격 저장소와 옵시디언 연결하기.md",
     "Obisidian practice/옵시디언 연습.md",
