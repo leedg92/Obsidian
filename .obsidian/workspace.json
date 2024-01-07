@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "옵시디언/깃 원격 저장소와 옵시디언 연결하기.md",
+                "file": "깃 원격 저장소와 옵시디언 연결하기.md",
                 "mode": "source",
                 "source": false
               }
@@ -85,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "옵시디언/깃 원격 저장소와 옵시디언 연결하기.md",
+                "file": "깃 원격 저장소와 옵시디언 연결하기.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "옵시디언/깃 원격 저장소와 옵시디언 연결하기.md",
+                "file": "깃 원격 저장소와 옵시디언 연결하기.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "옵시디언/깃 원격 저장소와 옵시디언 연결하기.md"
+                "file": "깃 원격 저장소와 옵시디언 연결하기.md"
               }
             }
           }
@@ -148,8 +148,10 @@
   },
   "active": "b71a4ad9e0b8aed9",
   "lastOpenFiles": [
-    "옵시디언/README.md",
+    "README.md",
+    "깃 원격 저장소와 옵시디언 연결하기.md",
     "옵시디언/깃 원격 저장소와 옵시디언 연결하기.md",
+    "옵시디언/README.md",
     "옵시디언/무제 파일.canvas",
     "옵시디언",
     "새 폴더 (2)",
