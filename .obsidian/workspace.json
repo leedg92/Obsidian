@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "깃 원격 저장소와 옵시디언 연결하기.md",
+                "file": "Obisidian practice/옵시디언 연습.md",
                 "mode": "source",
                 "source": false
               }
@@ -85,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "깃 원격 저장소와 옵시디언 연결하기.md",
+                "file": "Obisidian practice/옵시디언 연습.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "깃 원격 저장소와 옵시디언 연결하기.md",
+                "file": "Obisidian practice/옵시디언 연습.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "깃 원격 저장소와 옵시디언 연결하기.md"
+                "file": "Obisidian practice/옵시디언 연습.md"
               }
             }
           }
@@ -148,8 +148,12 @@
   },
   "active": "b71a4ad9e0b8aed9",
   "lastOpenFiles": [
-    "README.md",
+    "Obisidian practice/옵시디언이란.md",
+    "Obisidian practice/옵시디언 연습.md",
+    "옵시디언.md",
     "깃 원격 저장소와 옵시디언 연결하기.md",
+    "Obisidian practice",
+    "README.md",
     "옵시디언/깃 원격 저장소와 옵시디언 연결하기.md",
     "옵시디언/README.md",
     "옵시디언/무제 파일.canvas",
