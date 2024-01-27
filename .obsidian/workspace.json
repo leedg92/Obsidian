@@ -37,7 +37,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "산인공DAG.md",
+                "file": "Airflow/Airflow란.md",
                 "mode": "source",
                 "source": false
               }
@@ -110,7 +110,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "산인공DAG.md",
+                "file": "Airflow/Airflow란.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -127,7 +127,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "산인공DAG.md",
+                "file": "Airflow/Airflow란.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -150,7 +150,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "산인공DAG.md"
+                "file": "Airflow/Airflow란.md"
               }
             }
           }
@@ -173,21 +173,20 @@
   },
   "active": "2252ad9e56e0634a",
   "lastOpenFiles": [
-    "COMWEL-PIPELINE-file2db.py",
-    "Airflow/Airflow란.md",
-    "산인공DAG.md",
     "Airflow/DAG샘플.md",
+    "Airflow/Airflow란.md",
+    "SLI_2023_HRDK_Airflow_교육자료.pdf",
+    "Airflow/산인공DAG.md",
+    "WORKNET-PIPELINE.py",
+    "HRDNET-PIPELINE-db2db.py",
+    "HRD4U-PIPELINE-db2db.py",
+    "COMWEL-PIPELINE-file2db.py",
     "exam03_exec2Java 2.py",
     "exam02-file2db 2.py",
     "exam01-db2db 3.py",
     "exam04 2.py",
     "Airflow/DAG(Directed Acyclic Graph).md",
     "exam01-db2db 2.py",
-    "exam04 1.py",
-    "exam03_exec2Java 1.py",
-    "exam02-file2db 1.py",
-    "exam01-db2db 1.py",
-    "exam01-db2db.py",
     "node.js/javaScript.md",
     "무제 파일.canvas",
     "Obisidian practice/깃 원격 저장소와 옵시디언 연결하기.md",
