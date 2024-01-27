@@ -18,8 +18,33 @@
                 "source": false
               }
             }
+          },
+          {
+            "id": "598873d6a58bfaf7",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Airflow/Airflow란.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "2252ad9e56e0634a",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "산인공DAG.md",
+                "mode": "source",
+                "source": false
+              }
+            }
           }
-        ]
+        ],
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -85,7 +110,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Airflow/Airflow란.md",
+                "file": "산인공DAG.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +127,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Airflow/Airflow란.md",
+                "file": "산인공DAG.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +150,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Airflow/Airflow란.md"
+                "file": "산인공DAG.md"
               }
             }
           }
@@ -146,30 +171,33 @@
       "command-palette:명령어 팔레트 열기": false
     }
   },
-  "active": "ba77188256ea9283",
+  "active": "2252ad9e56e0634a",
   "lastOpenFiles": [
-    "exam01-db2db.py",
-    "exam04.py",
-    "exam03_exec2Java.py",
-    "exam02-file2db.py",
-    "node.js/javaScript.md",
+    "COMWEL-PIPELINE-file2db.py",
     "Airflow/Airflow란.md",
-    "Airflow",
+    "산인공DAG.md",
+    "Airflow/DAG샘플.md",
+    "exam03_exec2Java 2.py",
+    "exam02-file2db 2.py",
+    "exam01-db2db 3.py",
+    "exam04 2.py",
+    "Airflow/DAG(Directed Acyclic Graph).md",
+    "exam01-db2db 2.py",
+    "exam04 1.py",
+    "exam03_exec2Java 1.py",
+    "exam02-file2db 1.py",
+    "exam01-db2db 1.py",
+    "exam01-db2db.py",
+    "node.js/javaScript.md",
     "무제 파일.canvas",
-    "node.js",
     "Obisidian practice/깃 원격 저장소와 옵시디언 연결하기.md",
     "Obisidian practice/옵시디언 연습.md",
     "Obisidian practice/옵시디언이란.md",
     "옵시디언.md",
-    "Obisidian practice",
     "README.md",
     "옵시디언/깃 원격 저장소와 옵시디언 연결하기.md",
     "옵시디언/README.md",
     "옵시디언/무제 파일.canvas",
-    "옵시디언",
-    "새 폴더 (2)",
-    "새 폴더",
-    "테스트폴더",
     "테스트폴더/테스트용.md"
   ]
 }
