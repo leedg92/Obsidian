@@ -1,0 +1,8 @@
+select 
+segment_name "테이블명",
+NVL((SELECT num_rows from user_tables where table_name = user_segments.segment_name),0) "row수(통계업데이트전 - 부정확)",
+bytes/1024 "용량(KB)",
+ROUND((bytes/1024/1024),2) "용량(MB)",
+ROUND((bytes/1024/1024/1024),2) "용량(GB)",
+ROUND((bytes/1024/1024) * 100 /(SELECT SUM(bytes/1024/1024) FROM user_segments where segment_type='TABLE'),2) * 100 "퍼센트(%)"
+from user_segments;

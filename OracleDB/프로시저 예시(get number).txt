@@ -1,0 +1,27 @@
+create or replace FUNCTION FN_GET_NUMBER( I_VALUE NVARCHAR2) RETURN VARCHAR2 IS
+/*
+ 설 명 : 문자열에서 숫자만 가져옴.
+ 작성일 : 2023.10.06
+ 작성자 : 김태환
+*/
+iCNT        INTEGER := 1;
+VALUE_LEN   INTEGER;
+RET_VALUE   VARCHAR2(500);
+TMP	    NVARCHAR2(1);
+
+BEGIN
+    VALUE_LEN := LENGTHB(TRIM(I_VALUE));
+
+    IF VALUE_LEN IS NULL OR VALUE_LEN = 0 THEN
+        RETURN NULL;
+    END IF;
+
+    FOR iCNT IN 1..VALUE_LEN LOOP
+        TMP := SUBSTR(I_VALUE, iCNT, 1);
+        IF  (ASCII(TMP) >= 48 AND ASCII(TMP) <= 57) THEN
+            RET_VALUE := RET_VALUE||TMP ;
+        END IF;
+    END LOOP;
+
+    RETURN RET_VALUE;
+END;
