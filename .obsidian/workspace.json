@@ -21,7 +21,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "README.md",
+                "file": "CMS/CMS.md",
                 "mode": "source",
                 "source": false
               }
@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "README.md",
+                "file": "CMS/CMS.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -111,7 +111,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "README.md",
+                "file": "CMS/CMS.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -134,7 +134,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "README.md"
+                "file": "CMS/CMS.md"
               }
             }
           }
@@ -157,9 +157,14 @@
   },
   "active": "572644b5df655503",
   "lastOpenFiles": [
+    "cms 오류 뜰 때 확인사항.txt",
+    "cms 정리.pdf",
+    "cms모듈 새로 생성하기.txt",
+    "README.md",
+    "CMS/CMS.md",
+    "CMS/cms모듈 새로 생성하기.txt",
     "CMS",
     "SLI_2023_HRDK_Airflow_교육자료.pdf",
-    "README.md",
     "Pasted image 20240127140254.png",
     "Cron.md",
     "무제 파일.md",
@@ -177,10 +182,6 @@
     "exam04 3.py",
     "exam03_exec2Java 3.py",
     "exam02-file2db 3.py",
-    "odbc 연결.txt",
-    "docker-compose.yaml",
-    "jdk-8u202-linux-x64.tar.gz",
-    "Dockerfile",
     "마크다운 치트시트.md",
     "무제 파일.canvas",
     "Obisidian practice/무제 파일.md",

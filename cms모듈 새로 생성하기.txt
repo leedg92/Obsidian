@@ -1,0 +1,86 @@
+모듈 새로 생성하기
+
+*IDX는 db에서 설정한 컬럼명으로 변경하기(ex HRD_INSTT 테이블 > INSTT_IDX)
+
+java(src/main/java/rbs/modules)
+ - sample 패키지 복사하기
+ - sample을 새로 생성한 모듈 이름으로 바꾸기(폴더이름, controller, impl, mapper)
+ - impl 수정사항
+   1. KEY_IDX를 IDX로 변경
+   2. implements 수정하기
+ * 모듈안에 기능이 여러가지일 때
+   1. fnIdx를 사용할 때 위 내용 그대로 실행
+   2. confModule을 사용할 때 위 내용 그대로 실행 + confModule이 지정된 모듈 새로 만들기
+     (ex. clinic이라는 모듈이 있고 clinicDct라는 모듈의 confModule이 clinic일 때 clinic으로 된 폴더 안에 ClinicController와 ClinicDctController가 둘 다 있어야 함)
+
+xml(src/main/resources/egovframework/sqlmap/mapper/rbs/modules)
+ - sample 폴더 복사해서 이름 바꾸기
+ - xml 파일 내 sample(대문자 포함)을 새로 생성한 모듈 이름으로 바꾸기
+ - 모듈이름_SQL_Oracle.xml 수정사항
+   1. [<include refid="SAMPLE_TABLE_NAME"/>] A >> [] 제거 및 SAMPLE을 새로 생성한 모듈 이름으로 바꾸기
+   2. selectList 쿼리 수정 >> SELECT A.* ~으로 변경, [기본정렬쿼리]를A.IDX으로 변경
+   3. deleteList 쿼리 수정 >> SELECT A.* ~으로 변경, [기본정렬쿼리]를 A.IDX으로 변경
+   4. [KEY_IDX_COLUMN]를 IDX로 변경
+   5. KEY_IDX를 IDX로 변경
+ - 모듈이름File_SQL_Oracle.xml 수정사항
+   1. 10번째줄 SAMPLE_${fnIdx}_FILE_INFO를 모듈이름_${fnIdx}_FILE_INFO로 변경, sql id 수정안함
+   2. selectList 쿼리 수정 >> SELECT A.* ~으로 변경
+   3. [KEY_IDX_COLUMN]를 IDX로 변경
+   4. KEY_IDX를 IDX로 변경
+ - 모듈이름Multi_SQL_Oracle.xml 수정사항
+   1. 10번째줄 SAMPLE_${fnIdx}_MULTI_INFO를 모듈이름_${fnIdx}_MULTI_INFO로 변경, sql id 수정안함
+   2. selectList 쿼리 수정 >> SELECT A.* ~으로 변경, ORDER BY A.IDX로 변경
+   3. [KEY_IDX_COLUMN]를 IDX로 변경
+   4. KEY_IDX를 IDX로 변경
+ * 모듈안에 기능이 여러가지일 때
+   1. fnIdx를 사용할 때 위 내용 그대로 실행
+   2. confModule을 사용할 때 위 내용 그대로 실행 + confModule이 지정된 모듈 새로 만들기
+     (ex. clinic이라는 모듈이 있고 clinicDct라는 모듈의 confModule이 clinic일 때 clinic으로 된 폴더 안에 Clinic_SQL_Oracle.xml과 ClinicDct_SQL_Oracle.xml가 둘 다 있어야 함)
+
+json(WEB-INF/data/rbs/conf/module)
+ - sample 폴더 복사해서 이름 바꾸기
+ - setting_info.json 수정사항
+   1. idx_name, idx_colunm 설정한 컬럼명(ex IDX)으로 바꾸기
+ - 항목 알맞게 수정하기(items, ~_order, list_search)
+ - format_type, object_type은 RBS_OPTION_INFO 참고
+ * 모듈안에 기능이 여러가지일 때
+   1. fnIdx를 사용할 때 fnIdx 번호에 맞게 1, 2, 3... 폴더 여러개 생성하기
+   2. confModule을 사용할 때 item_info.json에서 item_info 항목 바깥에 모듈이름_item_info 항목 새로 추가해서 항목 알맞게 수정하기(items, ~_order, list_search)
+     (ex.clinic이라는 모듈이 있고 clinicDct라는 모듈의 confModule이 clinic일 때 clinicDct_item_info 항목 추가하기, clinic 모듈은 item_info 항목을 사용하기 때문에 세부 항목만 수정해주면 된다.)
+
+json(WEB-INF/data/rbs/conf/moduleAuth) 기능권한관리 
+ - sample 폴더 복사해서 이름 바꾸기
+ * cms의 권한기능을 사용하지 않는다면 안쓰는 항목
+
+jsp(WEB-INF/jsp/rbs/modules)
+ - sample 폴더 복사해서 이름 바꾸기
+ - 모듈별 디자인 생성하기 
+   1. webapp/resource/rbs 에서 busi 복사해서 이름 바꾸기
+   2. admDesign과 usrDesign에 default 폴더를 복사하여 디자인 이름으로 바꾸기 
+ * 모듈안에 기능이 여러가지일 때
+   1. fnIdx를 사용할 때 위 내용 그대로 실행
+   2. confModule을 사용할 때 admDesign과 usrDesign에 default 폴더를 포함한 모든 디자인 폴더에 confModule이 지정된 모듈 이름으로 폴더 복사해서 만들기 + 모듈이름으로 자바스크립트 폴더 만들기(WEB-INF/jsp/rbs/modules/confModule이름 경로에 있는 jsp파일들 복사해서 폴더에 넣기, 디자인 템플릿이 있으면 각각 디자인 폴더 만들고 jsp 복사하기)
+    (ex.clinic이라는 모듈이 있고 clinicDct라는 모듈의 confModule이 clinic이고 디자인 템플릿이 request, plan이 있을 때 default, request, plan 각각 폴더에 기존 폴더를 복사하여 clinicDct 폴더 만들기 + WEB-INF/jsp/rbs/modules/confModule이름 경로 아래 clinicDct 폴더 만들고 해당 경로에 있는 jsp파일 복사하기, clinicDct 폴더에 request, default, plan 폴더 만들고 복사한 jsp파일 붙여넣기)
+ - 자바스크립트 경로 수정하기(confModule을 사용할 때)
+<c:if test="${!empty TOP_PAGE}">
+	<jsp:include page="${TOP_PAGE}" flush="false">
+		<jsp:param name="javascript_page" value="${moduleJspRPath}/activity/view.jsp"/> // ${moduleJspRPath}와 jsp 파일 사이에 디자인 폴더 경로(activity) 추가
+	</jsp:include>
+</c:if>
+   ㄴ confModule을 사용하지 않아도 정리가 필요하다면 폴더 만들고 동일하게 하면 되나 경로는 /clinic/activity/ 처럼 폴더 경로 추가필요
+
+db
+ - board_info, board_file_info, board_multi_info 복사해서 이름 및 IDX 바꾸기(테이블이 있으면 해당 테이블로 사용하기)
+ - 아래 쿼리 두개 실행
+   insert into RBS_MODULE_INFO (MODULE_ID, CONF_MODULE, MODULE_NAME, AN_URL, AN_URL2, UR_URL, UR_URL2, ISAUTH, ISAUTHMANAGER, ISSETTING, ISITEM, ISDESIGNTYPE, ISMENU, ISMANAGER, ISDB, REMARKS, ISSETMANAGER, ISITEMMANAGER, ISMENUSETTING, ISINPUTMANAGER, ORDER_IDX, USE_SDESIGN)
+   SELECT '모듈ID', CONF모듈ID(없는 경우 null), '모듈명', '관리자사이트기본경로(/모듈ID/list.do?mId=)', '관리자사이트기본경로2(없는 경우 null)', '사용자사이트기본경로(/모듈ID/list.do?mId=)', '사용자사이트기본경로2(없는 경우 null)', '1', 1, '0', '0', '0', '1', '0', '0', NULL, '0', '0', '1', '1', MAX(ORDER_IDX) + 1, '0' FROM RBS_MODULE_INFO;
+   insert into RBS_FN_INFO(FN_IDX, MODULE_ID, FN_NAME, ISAPPLY) values(1, '모듈ID', '기능명', '1');
+ - 쿼리 예시
+   insert into RBS_MODULE_INFO (MODULE_ID, CONF_MODULE, MODULE_NAME, AN_URL, AN_URL2, UR_URL, UR_URL2, ISAUTH, ISAUTHMANAGER, ISSETTING, ISITEM, ISDESIGNTYPE, ISMENU, ISMANAGER, ISDB, REMARKS, ISSETMANAGER, ISITEMMANAGER, ISMENUSETTING, ISINPUTMANAGER, ORDER_IDX, USE_SDESIGN)
+   SELECT 'instt', null, '지부지사관리', '/instt/list.do?mId=', null, '/instt/list.do?mId=', null, '1', 1, '1', '0', '0', '1', '1', '1', NULL, '1', '1', '1', '1', MAX(ORDER_IDX) + 1, '0' FROM RBS_MODULE_INFO;
+   insert into RBS_FN_INFO(FN_IDX, MODULE_ID, FN_NAME, ISAPPLY) values(1, 'instt', '지부지사관리', '1');
+
+* 다른 모듈에서 호출할 때
+ - ~SearchController.java 생성하기 (implements ModuleSearchController)
+ - RequestMapping 수정하기 (@RequestMapping({"/{admSiteId}/menuContents/{usrSiteId}/모듈명", "/{admSiteId}/moduleFn/모듈명", "/{siteId}/모듈명"}))
+ - ModuleAuth 수정하기(@ModuleAuth(name="권한", accessModule="접근할 모듈"))

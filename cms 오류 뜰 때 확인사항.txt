@@ -1,0 +1,14 @@
+CMS 오류 뜰 때 확인할 사항
+1. 404에러
+ - /WEB-INF/jsp//rbs/modules/develop/usrDesign/default/customizedInfo.jsp 이런 식으로 /가 두개 나오면 IA정보구조관리에서 디자인 템플릿 제대로 연결됐는지 확인
+2. 400에러
+ - 자바로 넘어가서 에러가 뜬다면 RbsProperties.getProperty("Globals.error.400.path"); 확인하기(보통 keyIdx가 안넘어감)
+3. itui:objectSelectClass 를 사용할 때 option값이 안나옴
+ - 자바에서 "submitType" 을 model에 addAttribute 해주기(write, view, modify 등등)
+ - 자바스크립트에 <itui:submitReset items="${itemInfo.items}" itemOrder="${itemInfo[itemOrderName]}"/>, <itui:submitInit items="${itemInfo.items}" itemOrder="${itemInfo[itemOrderName]}"/> 둘다 추가해주기
+   itemOrderName은 item_info에서 설정한 *_order
+4. '권한이 없습니다' 라고 나올 때
+ - IA정보구조관리에서 설정한 기본권한이 안맞을 수 있음
+  ㄴ 기능관리 > 기능코드관리에서 해당 모듈에 권한 추가하기 (dct는 소속기관 직원, web은 기업회원으로 다 설정하기)
+5. "요청하신 페이지를 찾을 수 없습니다"라는 alert이 뜰 때 
+ - 해당 컨트롤러에 있는 @ModuleAuth 어노테이션 삭제하기(@ModuleAuth를 안쓴다면)
