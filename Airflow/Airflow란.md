@@ -12,4 +12,4 @@
 5. 모니터링 및 실패 작업에 대한 재실행 기능이 간편
 
 # 기타 참고 파일
-![[SLI_2023_HRDK_Airflow_교육자료.pdf]]
+![[SLI_2023_HRDK_Airflow_교육자료.pdf]]![[SLI_2023_HRDK_Airflow_설치가이드.pdf]]![[Dockerfile]]![[docker-compose.yaml]]![[odbc 연결.txt]]
