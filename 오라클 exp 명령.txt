@@ -1,0 +1,3 @@
+exp owner=hrd4u_user file='doctor.dmp'
+
+-- 옵션 여러가지 있음

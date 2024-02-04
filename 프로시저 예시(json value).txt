@@ -1,0 +1,75 @@
+create or replace FUNCTION FN_JSON_VALUE(P_KEY IN VARCHAR2, P_VALUES IN CLOB) RETURN CLOB IS
+/*
+ *   함수명 : FN_JSON_VALUE
+ *   작성일 : 2023.11.02
+ *   작성자 : 김태환
+ *   설 명 : 입력된 값을 JSON 형태로 변환하여 값을 리턴
+ *   입력값 : P_KEY   : 키 값을 구분 값 ","으로 구분하여 1개 또는 여러개를 입력 
+ *           P_VALUES: 키에 해당하는 VALUE를 구분 값 CHR(1)로 구분하여 키 값 개수 만큼 입력
+ *   예 제 : FN_JSON_VALUE('OPERT_DC, OPERT_PROGRM_NM, OPERT_START_DT, OPERT_PARAMTR', OPERT_DC||chr(1)||OPERT_PROGRM_NM||chr(1)||OPERT_START_DT||chr(1)||OPERT_PARAMTR)
+*/
+ICNT INTEGER := 0;
+RET_VALUE CLOB := NULL;
+KEY_LEN INTEGER := 0 ;
+KEY_IND INTEGER := 0 ;
+KEY_NEXT_IND  INTEGER := 1 ;
+VAL_LEN INTEGER := 0 ;
+VAL_IND INTEGER := 0 ;
+VAL_NEXT_IND  INTEGER := 1 ;
+JKEY   VARCHAR2(50);
+JVAL   CLOB;
+BEGIN
+    ICNT := REGEXP_COUNT( P_KEY,',') + 1;
+    KEY_LEN := LENGTH(P_KEY) ;
+    VAL_LEN := LENGTH(P_VALUES) ;
+    FOR I IN 1..ICNT LOOP
+
+        KEY_IND := INSTR(P_KEY, ',', KEY_IND+1);
+        VAL_IND := INSTR(P_VALUES, CHR(1), VAL_IND+1);
+
+        IF KEY_IND <= 0 THEN
+            KEY_IND := KEY_LEN ; 
+        END IF;
+
+        IF VAL_IND <= 0 THEN
+            VAL_IND := VAL_LEN ; 
+        END IF;
+
+        IF I = 1 THEN
+            JKEY := SUBSTR(P_KEY,1,KEY_IND-1);
+            KEY_NEXT_IND := KEY_IND+1 ;
+
+            JVAL := SUBSTR(P_VALUES,1,VAL_IND-1);
+            VAL_NEXT_IND := VAL_IND+1 ;
+        ELSE
+            IF I < ICNT THEN
+                JKEY := SUBSTR(P_KEY, KEY_NEXT_IND, KEY_IND - KEY_NEXT_IND );
+                KEY_NEXT_IND := KEY_IND+1 ;
+
+                JVAL := SUBSTR(P_VALUES, VAL_NEXT_IND, VAL_IND - VAL_NEXT_IND );
+                VAL_NEXT_IND := VAL_IND+1 ;
+            ELSE
+                JKEY := SUBSTR(P_KEY, KEY_NEXT_IND, KEY_IND - KEY_NEXT_IND+1 );
+                KEY_NEXT_IND := KEY_IND+1 ;
+
+                JVAL := SUBSTR(P_VALUES, VAL_NEXT_IND, VAL_IND - VAL_NEXT_IND+1 );
+                VAL_NEXT_IND := VAL_IND+1 ;
+            END IF;
+        END IF;
+
+        -- 문자 중 ", ' 값을 치환
+        JVAL := REPLACE(JVAL, '"','\"');
+        JVAL := REPLACE(JVAL, '''','''''');
+
+        IF ICNT = 0 OR I = ICNT THEN
+            RET_VALUE := RET_VALUE||'"'||TRIM(JKEY)||'":"'||JVAL||'"' ;
+        ELSE
+            RET_VALUE := RET_VALUE||'"'||TRIM(JKEY)||'":"'||JVAL||'",' ;
+        END IF;
+    END LOOP;
+    IF LENGTH(RET_VALUE) > 1 THEN
+        RETURN '{'||RET_VALUE||'}';
+    END IF;
+EXCEPTION WHEN OTHERS THEN
+    RETURN NULL ;
+END;

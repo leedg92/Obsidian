@@ -1,0 +1,866 @@
+create or replace PACKAGE BODY PKG_IFS_NET_DATA_OGNZ  AS
+ /*
+ * 프로그램명 : PKG_IFS_NET_DATA_OGNZ
+ * 설     명 : 훈련생 자료 구축
+ * 작 성 일  :  2023.10.12
+ * 작 성 자  :  김 태 환
+ */
+    PROCEDURE P_ALL_PROC IS
+
+    v_start_date    VARCHAR2(8);
+    v_end_date      VARCHAR2(8) := TO_CHAR(SYSDATE,'YYYYMMDD');
+    v_current_date  VARCHAR2(8) ;
+
+    BEGIN
+            SELECT NVL(MAX(OPERT_PARAMTR),TO_CHAR(SYSDATE,'YYYYMMDD')) 
+                 into v_start_date
+            FROM (  SELECT OPERT_PARAMTR, COUNT(*)
+                    FROM HRD_COM_BATCH_LOG
+                    WHERE OPERT_PROGRM_NM LIKE 'PKG_IFS_NET_DATA_OGNZ.P_IFS_NET_DATA_OGNZ%' 
+                      AND OPERT_RESULT   = 'DONE'
+                    GROUP BY OPERT_PROGRM_NM, OPERT_PARAMTR  
+                    HAVING COUNT(*) = 3     ) ;
+
+            v_current_date := TO_CHAR(TO_DATE(v_start_date,'YYYYMMDD') + 1,'YYYYMMDD');
+
+            loop
+                exit when TO_DATE(v_current_date,'YYYYMMDD') > TO_DATE(v_end_date,'YYYYMMDD');
+
+                    P_IFS_NET_DATA_OGNZ(v_current_date);
+                    P_IFS_HRDNET_TR_TP_DAILY(v_current_date);
+
+                    v_current_date := TO_CHAR(TO_DATE(v_current_date,'YYYYMMDD') + 1,'YYYYMMDD') ;
+            end loop;
+
+    END P_ALL_PROC;
+    /*
+    사업주, 컨소시엄, 지역산업맞춤 훈련생 자료 구축
+    */
+    PROCEDURE P_IFS_NET_DATA_OGNZ(P_WRT_DATE IN VARCHAR2) IS
+    LREC_TR_MTH       REC_TR_MTH;
+    LREC_BATCH_LOG    PKG_GLOBAL_REC.GREC_BATCH_LOG;
+    iCNT              INTEGER := 0; 
+
+    PARENT_NOT_FOUND exception ;
+    PRAGMA exception_init(PARENT_NOT_FOUND, -2291);
+
+    CURSOR CUR_BPR IS        
+    SELECT A.IF_SEQ        , A.SEQ_NO       , A.TRPR_NM      , A.TRPR_CD       , A.TRPR_DEGR      ,
+           A.HR_ORG_NM     , A.HR_ORG_CD    , A.HIR_CTR_NM   , A.HIR_CTR_CD    , A.TRP_NM         ,
+           A.TRP_IDNT_CD   , A.SCHL_STAT    , A.FINI_GB      , A.HIR_TY        , A.TEL_NO         ,
+           A.HP_NO         , A.EMAIL        , A.TOT_TR_CST   , A.RTN_TR_CST    , A.OWN_CST        ,
+           A.LV_CST        , A.TR_ALW       , A.BPL_NM       , A.BPL_NO        , A.ENT_SCL        ,
+           A.ORDTM_LABRR_CO, A.BKIND_LCLS_NM, A.BKIND_LCLS_CD, A.BKIND_MCLS_NM , A.BKIND_MCLS_CD  ,
+           A.BKIND_SCLS_NM , A.BKIND_SCLS_CD, A.LNM_ADRES    , A.ALT_HR_SPT_CST, A.PAY_VAC_SPT_CST,
+           TO_DATE(AP_DEAL_DT, 'YYYYMMDDHH24MISS') AS AP_DEAL_DT    , A.AP_DEAL_STATE, A.PRRT         ,
+           DECODE(A.PAY_VAC_YN,'예','Y','아니오','N',NULL,'N',A.PAY_VAC_YN) AS PAY_VAC_YN,
+           DECODE(A.AHMP_REG_YN,'예','Y','아니오','N',NULL,'N',A.AHMP_REG_YN) AS AHMP_REG_YN
+    FROM IFS_NET_BPR_TRA A
+    WHERE A.IF_DEAL_DT like P_WRT_DATE || '%';
+
+    CURSOR CUR_CON IS        
+    SELECT A.IF_SEQ       , A.SEQ_NO       , A.TRPR_NM        , A.TRPR_CD       , A.TRPR_DEGR     ,
+           A.HR_ORG_NM    , A.HR_ORG_CD    , A.HIR_CTR_NM     , A.HIR_CTR_CD    , A.TRP_NM        ,
+           A.TRP_IDNT_CD  , A.SCHL_STAT    , A.FINI_GB        , A.HIR_TY1       , A.TEL_NO        ,
+           A.HP_NO        , A.EMAIL        , A.TOT_TR_CST     , A.SPT_TR_CST    , A.LV_CST        ,
+           A.TR_ALW       , A.BPL_NM       , A.BPL_NO         , A.ENT_SCL       , A.ORDTM_LABRR_CO,
+           A.BKIND_LCLS_NM, A.BKIND_LCLS_CD, A.BKIND_MCLS_NM  , A.BKIND_MCLS_CD , A.INDUTY_SCLS_NM,
+           A.BKIND_SCLS_CD, A.LNM_ADRES    , A.PAY_VAC_SPT_CST, A.ALT_HR_SPT_CST, A.HIR_TY2       ,
+           TO_DATE(AP_DEAL_DT, 'YYYYMMDDHH24MISS') AS AP_DEAL_DT, A.AP_DEAL_STATE, A.AYTM_RQUT_YN   , A.ENTR_UNIV_YN  ,
+           DECODE(A.PAY_VAC_YN,'예','Y','아니오','N',NULL,'N',A.PAY_VAC_YN) AS PAY_VAC_YN,
+           DECODE(A.AHMP_REG_YN,'예','Y','아니오','N',NULL,'N',A.AHMP_REG_YN) AS AHMP_REG_YN
+    FROM IFS_NET_CON_TRA A
+    WHERE  A.IF_DEAL_DT like P_WRT_DATE || '%';
+
+    CURSOR CUR_REG IS
+    SELECT A.IF_SEQ       , A.SEQ_NO       , A.TRPR_NM        , A.TRPR_CD       , A.TRPR_DEGR     ,
+           A.R_ORG_CD_NM  , A.R_ORG_CD     , A.HIR_CTR_NM     , A.HIR_CTR_CD    , A.TRP_NM        ,
+           A.TRP_IDNT_CD  , A.SCHL_STAT    , A.FINI_GB        , A.HIR_TY        , A.TEL_NO        ,
+           A.HP_NO        , A.EMAIL        , A.TOT_TR_CST     , A.SPT_TR_CST    , A.LV_CST        ,
+           A.TR_ALW       , A.BPL_NM       , A.BPL_NO         , A.ENT_SCL       , A.ORDTM_LABRR_CO,
+           A.BKIND_LCLS_NM, A.BKIND_LCLS_CD, A.BKIND_MCLS_NM  , A.BKIND_MCLS_CD , A.BKIND_SCLS_NM ,
+           A.BKIND_SCLS_CD, A.LNM_ADRES    , A.PAY_VAC_SPT_CST, A.ALT_HR_SPT_CST, A.HRD_COMM_NM   ,
+           A.PNR_TRNN_NM  , A.PNR_TRNN_CD  , A.PNR_TRNN_TY   , A.HIR_TY1        ,
+           TO_DATE(AP_DEAL_DT, 'YYYYMMDDHH24MISS') AS AP_DEAL_DT,  A.AP_DEAL_STATE, A.AYTM_RQUT_YN ,
+           DECODE(A.PAY_VAC_YN,'예','Y','아니오','N',NULL,'N',A.PAY_VAC_YN) AS PAY_VAC_YN,
+           DECODE(A.AHMP_REG_YN,'예','Y','아니오','N',NULL,'N',A.AHMP_REG_YN) AS AHMP_REG_YN
+    FROM  IFS_NET_REG_TRA A
+    WHERE A.IF_DEAL_DT like P_WRT_DATE || '%';
+
+    BEGIN
+        --============================================
+        -- 로그 기록
+        LREC_BATCH_LOG.OPERT_PROGRM_NM := 'PKG_IFS_NET_DATA_OGNZ.P_IFS_NET_DATA_OGNZ'||' '||TO_CHAR(SYSDATE,'YYYY-MM-DD HH24:MI');
+        LREC_BATCH_LOG.OPERT_IDX       := NULL;
+        LREC_BATCH_LOG.OPERT_DC        := '사업주 훈련생 자료 구축';
+        LREC_BATCH_LOG.OPERT_PARAMTR   := P_WRT_DATE;
+        LREC_BATCH_LOG.OPERT_CO        := NULL;
+        LREC_BATCH_LOG.OPERT_RESULT    := NULL;
+        LREC_BATCH_LOG.RESULT_MSSAGE   := NULL;
+        LREC_BATCH_LOG.OPERT_START_DT  := SYSDATE ;
+        LREC_BATCH_LOG.OPERT_END_DT    := NULL;
+        PKG_BATCH_LOG.P_INS_LOG(LREC_BATCH_LOG);
+        -- =======================================
+
+        FOR CUR IN CUR_BPR LOOP
+            BEGIN
+                SELECT MAX(TR_METH_CD),  MAX(TR_METH_CD1), MAX(TR_OWNR), MAX(TR_DCNT), MAX(TO_DATE(TR_STA_DT, 'YYYYMMDD')), MAX(TO_DATE(TR_END_DT, 'YYYYMMDD'))
+                INTO LREC_TR_MTH.TR_MTH , LREC_TR_MTH.MIX_TR_MTH, LREC_TR_MTH.TR_MBY ,LREC_TR_MTH.TR_DAYCNT, LREC_TR_MTH.TR_START_DATE, LREC_TR_MTH.TR_END_DATE
+                FROM IFS_NET_BPR_TR
+                WHERE (IF_SEQ ) IN ( SELECT MAX(IF_SEQ)
+                                 FROM IFS_NET_BPR_TR
+                                 WHERE TRPR_CD   = CUR.TRPR_CD 
+                                   AND TRPR_DEGR = CUR.TRPR_DEGR ) ;
+
+            MERGE INTO HRD_BSK_BPR USING DUAL  ON ( HRD_BSK_BPR.BPL_NO = CUR.BPL_NO 
+                                                AND HRD_BSK_BPR.TRNEE_CD = CUR.TRP_IDNT_CD
+                                                AND HRD_BSK_BPR.TP_CD = CUR.TRPR_CD
+                                                AND HRD_BSK_BPR.TP_TME = CUR.TRPR_DEGR )
+            WHEN MATCHED THEN
+                UPDATE SET
+                    TP_NM = CUR.TRPR_NM,
+                    HNF_PBLCRP_NM = CUR.HR_ORG_NM,
+                    HNF_PBLCRP_CD = CUR.HR_ORG_CD,
+                    EMPLYM_CNTER_NM = CUR.HIR_CTR_NM,
+                    EMPLYM_CNTER_CD = CUR.HIR_CTR_CD,
+                    TRNEE_NM = CUR.TRP_NM,
+                    ACDMCR = CUR.SCHL_STAT,
+                    COMPL_SE = CUR.FINI_GB,
+                    EMPLYM_STLE = CUR.HIR_TY,
+                    TELNO = CUR.TEL_NO,
+                    MOBLPHON = CUR.HP_NO,
+                    EMAIL = CUR.EMAIL,
+                    TOT_TR_CT = CUR.TOT_TR_CST,
+                    RETUN_TR_CT = CUR.RTN_TR_CST,
+                    BPRPRR_ALOTM = CUR.OWN_CST,
+                    BDRD_CT = CUR.LV_CST,
+                    TR_ALLWNC = CUR.TR_ALW,
+                    BPL_NM = CUR.BPL_NM,
+                    CORP_SCALE = CUR.ENT_SCL,
+                    TOT_WORK_CNT = CUR.ORDTM_LABRR_CO,
+                    LOCPLC = CUR.LNM_ADRES,
+                    PAIDLV_YN = CUR.PAY_VAC_YN,
+                    PAIDLV_SPORT_CT = CUR.PAY_VAC_SPT_CST,
+                    ALTMP_SPORT_YN = CUR.AHMP_REG_YN,
+                    ALTMP_SPORT_CT = CUR.ALT_HR_SPT_CST,
+                    RTPRGS_RT = CUR.PRRT,
+                    TR_MTH = LREC_TR_MTH.TR_MTH , 
+                    MIX_TR_MTH = LREC_TR_MTH.MIX_TR_MTH, 
+                    TR_MBY = LREC_TR_MTH.TR_MBY ,
+                    TR_DAYCNT = LREC_TR_MTH.TR_DAYCNT, 
+                    TR_START_DATE = LREC_TR_MTH.TR_START_DATE,
+                    TR_END_DATE =  LREC_TR_MTH.TR_END_DATE,
+                    CNDATAOCC_DT = CUR.AP_DEAL_DT,
+                    CNDATAOCC_STATUS = CUR.AP_DEAL_STATE
+            WHEN NOT MATCHED THEN
+                INSERT
+                ( BPL_NO       , TRNEE_CD       , TP_CD          , TP_TME         , TP_NM        ,
+                  HNF_PBLCRP_NM, HNF_PBLCRP_CD  , EMPLYM_CNTER_NM, EMPLYM_CNTER_CD, TRNEE_NM     ,
+                  ACDMCR       , COMPL_SE       , EMPLYM_STLE    , TELNO          , MOBLPHON     ,
+                  EMAIL        , TOT_TR_CT      , RETUN_TR_CT    , BPRPRR_ALOTM   , BDRD_CT      ,
+                  TR_ALLWNC    , BPL_NM         , CORP_SCALE     , TOT_WORK_CNT   , LOCPLC       ,
+                  PAIDLV_YN    , PAIDLV_SPORT_CT, ALTMP_SPORT_YN , ALTMP_SPORT_CT , RTPRGS_RT    ,
+                  TR_MTH       , MIX_TR_MTH     , TR_MBY         , TR_DAYCNT      , TR_START_DATE,
+                  TR_END_DATE  , CNDATAOCC_DT   , CNDATAOCC_STATUS      )
+                VALUES
+                ( CUR.BPL_NO             , CUR.TRP_IDNT_CD       , CUR.TRPR_CD        , CUR.TRPR_DEGR        , CUR.TRPR_NM, 
+                  CUR.HR_ORG_NM          , CUR.HR_ORG_CD         , CUR.HIR_CTR_NM     , CUR.HIR_CTR_CD       , CUR.TRP_NM, 
+                  CUR.SCHL_STAT          , CUR.FINI_GB           , CUR.HIR_TY         , CUR.TEL_NO           , CUR.HP_NO, 
+                  CUR.EMAIL              , CUR.TOT_TR_CST        , CUR.RTN_TR_CST     , CUR.OWN_CST          , CUR.LV_CST, 
+                  CUR.TR_ALW             , CUR.BPL_NM            , CUR.ENT_SCL        , CUR.ORDTM_LABRR_CO   , CUR.LNM_ADRES, 
+                  CUR.PAY_VAC_YN         , CUR.PAY_VAC_SPT_CST   , CUR.AHMP_REG_YN    , CUR.ALT_HR_SPT_CST   , CUR.PRRT, 
+                  LREC_TR_MTH.TR_MTH     , LREC_TR_MTH.MIX_TR_MTH, LREC_TR_MTH.TR_MBY , LREC_TR_MTH.TR_DAYCNT, LREC_TR_MTH.TR_START_DATE,
+                  LREC_TR_MTH.TR_END_DATE, CUR.AP_DEAL_DT        , CUR.AP_DEAL_STATE  ); 
+                  
+                -- 직업훈련여부 업데이트      
+                P_UPD_BSK_OCCP_TR_YN(CUR.BPL_NO);
+            
+            EXCEPTION 
+                WHEN PARENT_NOT_FOUND THEN
+                    IF LREC_BATCH_LOG.RESULT_MSSAGE IS NULL THEN
+                        LREC_BATCH_LOG.RESULT_MSSAGE := SQLERRM ||' ';
+                    END IF;    
+                    LREC_BATCH_LOG.RESULT_MSSAGE   :=  LREC_BATCH_LOG.RESULT_MSSAGE||CUR.BPL_NO||',';
+                    iCNT := iCNT - 1;
+                WHEN OTHERS THEN
+                    LREC_BATCH_LOG.OPERT_CO        := NULL;
+                    LREC_BATCH_LOG.OPERT_RESULT    := 'FAIL';
+                    LREC_BATCH_LOG.RESULT_MSSAGE   := SQLERRM||'('||CUR.BPL_NO||';'||CUR.TRP_IDNT_CD||';'||CUR.TRPR_CD||';'|| CUR.TRPR_DEGR||')';
+                    LREC_BATCH_LOG.OPERT_END_DT    := SYSDATE;
+                    PKG_BATCH_LOG.P_UPD_LOG(LREC_BATCH_LOG);
+                    RAISE_APPLICATION_ERROR( -20001, LREC_BATCH_LOG.RESULT_MSSAGE);
+            END;
+            iCNT := iCNT + 1;                               
+        END LOOP;
+        --=========================================
+        -- 종료 로그 기록
+        LREC_BATCH_LOG.OPERT_CO        := iCNT;
+        LREC_BATCH_LOG.OPERT_RESULT    := 'DONE';
+        IF LREC_BATCH_LOG.RESULT_MSSAGE IS NULL THEN
+            LREC_BATCH_LOG.RESULT_MSSAGE   := '사업주 훈련생 자료 구축 완료 되었습니다.';
+        END IF;    
+        LREC_BATCH_LOG.OPERT_END_DT    := SYSDATE ;
+        PKG_BATCH_LOG.P_UPD_LOG(LREC_BATCH_LOG);
+        --=========================================================
+        -- 변수 초기화
+        LREC_TR_MTH.TR_MTH := NULL;
+        LREC_TR_MTH.MIX_TR_MTH := NULL;
+        LREC_TR_MTH.TR_MBY := NULL;
+        LREC_TR_MTH.TR_DAYCNT :=  NULL;
+        LREC_TR_MTH.TR_START_DATE := NULL;
+        LREC_TR_MTH.TR_END_DATE := NULL;
+        iCNT := 0;
+        --============================================================
+        LREC_BATCH_LOG.OPERT_IDX       := NULL;
+        LREC_BATCH_LOG.OPERT_DC        := '컨소시엄 훈련생 자료 구축';
+        LREC_BATCH_LOG.OPERT_PARAMTR   := P_WRT_DATE;
+        LREC_BATCH_LOG.OPERT_CO        := NULL;
+        LREC_BATCH_LOG.OPERT_RESULT    := NULL;
+        LREC_BATCH_LOG.RESULT_MSSAGE   := NULL;
+        LREC_BATCH_LOG.OPERT_START_DT  := SYSDATE ;
+        LREC_BATCH_LOG.OPERT_END_DT    := NULL;
+        PKG_BATCH_LOG.P_INS_LOG(LREC_BATCH_LOG);
+        
+        FOR CUR IN CUR_CON LOOP       
+            BEGIN
+
+                SELECT MAX(TR_METH_CD),  MAX(TR_OWNR), MAX(TR_DCNT), MAX(TO_DATE(TR_STA_DT, 'YYYYMMDD')), MAX(TO_DATE(TR_END_DT, 'YYYYMMDD'))
+                    INTO LREC_TR_MTH.TR_MTH ,  LREC_TR_MTH.TR_MBY ,LREC_TR_MTH.TR_DAYCNT, LREC_TR_MTH.TR_START_DATE, LREC_TR_MTH.TR_END_DATE
+                FROM IFS_NET_CON_TR
+                WHERE (IF_SEQ ) IN ( SELECT MAX(IF_SEQ)
+                                     FROM IFS_NET_CON_TR
+                                     WHERE TRPR_CD = CUR.TRPR_CD 
+                                       AND TRPR_DEGR = CUR.TRPR_DEGR ) ;       
+
+                MERGE INTO HRD_BSK_CON USING DUAL  ON ( HRD_BSK_CON.BPL_NO = CUR.BPL_NO
+                                                    AND HRD_BSK_CON.TRNEE_CD = CUR.TRP_IDNT_CD
+                                                    AND HRD_BSK_CON.TP_CD = CUR.TRPR_CD 
+                                                    AND HRD_BSK_CON.TP_TME = CUR.TRPR_DEGR  )
+                WHEN MATCHED THEN
+                    UPDATE SET                                
+                        HRD_BSK_CON.TP_NM = CUR.TRPR_NM,
+                        HRD_BSK_CON.HNF_PBLCRP_NM = CUR.HR_ORG_NM,
+                        HRD_BSK_CON.HNF_PBLCRP_CD = CUR.HR_ORG_CD,
+                        HRD_BSK_CON.EMPLYM_CNTER_NM = CUR.HIR_CTR_NM,
+                        HRD_BSK_CON.EMPLYM_CNTER_CD = CUR.HIR_CTR_CD,
+                        HRD_BSK_CON.TRNEE_NM = CUR.TRP_NM,
+                        HRD_BSK_CON.ACDMCR = CUR.SCHL_STAT,
+                        HRD_BSK_CON.COMPL_SE = CUR.FINI_GB,
+                        HRD_BSK_CON.EMPLYM_STLE = CUR.HIR_TY1,
+                        HRD_BSK_CON.TELNO = CUR.TEL_NO,
+                        HRD_BSK_CON.MOBLPHON = CUR.HP_NO,
+                        HRD_BSK_CON.EMAIL = CUR.EMAIL,
+                        HRD_BSK_CON.TOT_TR_CT = CUR.TOT_TR_CST,
+                        HRD_BSK_CON.SPORT_TR_CT = CUR.SPT_TR_CST,
+                        HRD_BSK_CON.BDRD_CT = CUR.LV_CST,
+                        HRD_BSK_CON.TR_ALLWNC = CUR.TR_ALW,
+                        HRD_BSK_CON.BPL_NM = CUR.BPL_NM,
+                        HRD_BSK_CON.CORP_SCALE = CUR.ENT_SCL,
+                        HRD_BSK_CON.TOT_WORK_CNT = CUR.ORDTM_LABRR_CO,
+                        HRD_BSK_CON.BPL_ADDR = CUR.LNM_ADRES,
+                        HRD_BSK_CON.PAIDLV_YN = CUR.PAY_VAC_YN,
+                        HRD_BSK_CON.PAIDLV_SPORT_CT = CUR.PAY_VAC_SPT_CST,
+                        HRD_BSK_CON.ALTMP_SPORT_YN = CUR.AHMP_REG_YN,
+                        HRD_BSK_CON.ALTMP_SPORT_CT = CUR.ALT_HR_SPT_CST,
+                        HRD_BSK_CON.EMPLYM_STLE1 = CUR.HIR_TY2,
+                        HRD_BSK_CON.CNDATAOCC_DT = CUR.AP_DEAL_DT,
+                        HRD_BSK_CON.CNDATAOCC_STATUS = CUR.AP_DEAL_STATE,
+                        HRD_BSK_CON.ANYTM_REQST_YN = CUR.AYTM_RQUT_YN,
+                        HRD_BSK_CON.CORP_UNIV_YN = CUR.ENTR_UNIV_YN,
+                        HRD_BSK_CON.TR_MTH = LREC_TR_MTH.TR_MTH,
+                        HRD_BSK_CON.TR_MBY = LREC_TR_MTH.TR_MBY,
+                        HRD_BSK_CON.TR_DAYCNT = LREC_TR_MTH.TR_DAYCNT,
+                        HRD_BSK_CON.TR_START_DATE = LREC_TR_MTH.TR_START_DATE,
+                        HRD_BSK_CON.TR_END_DATE = LREC_TR_MTH.TR_END_DATE
+                WHEN NOT MATCHED THEN
+                    INSERT                 
+                    ( BPL_NO         , TRNEE_CD      , TP_CD          , TP_TME         , TP_NM         ,
+                      HNF_PBLCRP_NM  , HNF_PBLCRP_CD , EMPLYM_CNTER_NM, EMPLYM_CNTER_CD, TRNEE_NM      ,
+                      ACDMCR         , COMPL_SE      , EMPLYM_STLE    , TELNO          , MOBLPHON      ,
+                      EMAIL          , TOT_TR_CT     , SPORT_TR_CT    , BDRD_CT        , TR_ALLWNC     ,
+                      BPL_NM         , CORP_SCALE    , TOT_WORK_CNT   , BPL_ADDR       , PAIDLV_YN     ,
+                      PAIDLV_SPORT_CT, ALTMP_SPORT_YN, ALTMP_SPORT_CT , EMPLYM_STLE1   , ANYTM_REQST_YN,
+                      CORP_UNIV_YN   , TR_MTH        , TR_MBY         , TR_DAYCNT      , TR_START_DATE ,
+                      TR_END_DATE    , CNDATAOCC_DT  , CNDATAOCC_STATUS  )
+                    VALUES
+                    ( CUR.BPL_NO             , CUR.TRP_IDNT_CD   , CUR.TRPR_CD       , CUR.TRPR_DEGR        , CUR.TRPR_NM              ,
+                      CUR.HR_ORG_NM          , CUR.HR_ORG_CD     , CUR.HIR_CTR_NM    , CUR.HIR_CTR_CD       , CUR.TRP_NM               ,
+                      CUR.SCHL_STAT          , CUR.FINI_GB       , CUR.HIR_TY1       , CUR.TEL_NO           , CUR.HP_NO                ,
+                      CUR.EMAIL              , CUR.TOT_TR_CST    , CUR.SPT_TR_CST    , CUR.LV_CST           , CUR.TR_ALW               ,
+                      CUR.BPL_NM             , CUR.ENT_SCL       , CUR.ORDTM_LABRR_CO, CUR.LNM_ADRES        , CUR.PAY_VAC_YN           ,
+                      CUR.PAY_VAC_SPT_CST    , CUR.AHMP_REG_YN   , CUR.ALT_HR_SPT_CST, CUR.HIR_TY2          , CUR.AYTM_RQUT_YN         ,
+                      CUR.ENTR_UNIV_YN       , LREC_TR_MTH.TR_MTH, LREC_TR_MTH.TR_MBY, LREC_TR_MTH.TR_DAYCNT, LREC_TR_MTH.TR_START_DATE,
+                      LREC_TR_MTH.TR_END_DATE, CUR.AP_DEAL_DT    , CUR.AP_DEAL_STATE  );
+                    
+                -- 직업훈련여부 업데이트      
+                P_UPD_BSK_OCCP_TR_YN(CUR.BPL_NO);
+                
+            EXCEPTION
+                WHEN PARENT_NOT_FOUND THEN
+                    IF LREC_BATCH_LOG.RESULT_MSSAGE IS NULL THEN
+                        LREC_BATCH_LOG.RESULT_MSSAGE := SQLERRM ||' ';
+                    END IF;    
+                    LREC_BATCH_LOG.RESULT_MSSAGE   :=  LREC_BATCH_LOG.RESULT_MSSAGE||CUR.BPL_NO||',';
+                    iCNT := iCNT - 1;
+                WHEN OTHERS THEN
+                    LREC_BATCH_LOG.OPERT_CO        := NULL;
+                    LREC_BATCH_LOG.OPERT_RESULT    := 'FAIL';
+                    LREC_BATCH_LOG.RESULT_MSSAGE   := SQLERRM;
+                    LREC_BATCH_LOG.OPERT_START_DT  := NULL ;
+                    LREC_BATCH_LOG.OPERT_END_DT    := SYSDATE;
+                    PKG_BATCH_LOG.P_UPD_LOG(LREC_BATCH_LOG);
+                    RAISE_APPLICATION_ERROR( -20001, LREC_BATCH_LOG.RESULT_MSSAGE);
+            END;
+            iCNT := iCNT + 1;
+        END LOOP;
+        --=========================================
+        -- 종료 로그 기록
+        LREC_BATCH_LOG.OPERT_CO        := iCNT;
+        LREC_BATCH_LOG.OPERT_RESULT    := 'DONE';
+        IF LREC_BATCH_LOG.RESULT_MSSAGE IS NULL THEN
+            LREC_BATCH_LOG.RESULT_MSSAGE   := '컨소시엄 훈련생 자료 구축 완료 되었습니다.';
+        END IF;
+        LREC_BATCH_LOG.OPERT_END_DT    := SYSDATE ;
+        PKG_BATCH_LOG.P_UPD_LOG(LREC_BATCH_LOG);
+
+        -- 변수 초기화
+        LREC_TR_MTH.TR_MTH := NULL;
+        LREC_TR_MTH.MIX_TR_MTH := NULL;
+        LREC_TR_MTH.TR_MBY := NULL;
+        LREC_TR_MTH.TR_DAYCNT :=  NULL;
+        LREC_TR_MTH.TR_START_DATE := NULL;
+        LREC_TR_MTH.TR_END_DATE := NULL;   
+        iCNT := 0;
+        --=======================================================
+        LREC_BATCH_LOG.OPERT_IDX       := NULL;
+        LREC_BATCH_LOG.OPERT_DC        := '지역산업맞춤 훈련생 자료 구축';
+        LREC_BATCH_LOG.OPERT_PARAMTR  := P_WRT_DATE;
+        LREC_BATCH_LOG.OPERT_CO        := NULL;
+        LREC_BATCH_LOG.OPERT_RESULT    := NULL;
+        LREC_BATCH_LOG.RESULT_MSSAGE   := NULL;
+        LREC_BATCH_LOG.OPERT_START_DT  := SYSDATE ;
+        LREC_BATCH_LOG.OPERT_END_DT    := NULL;
+        PKG_BATCH_LOG.P_INS_LOG(LREC_BATCH_LOG);
+
+        FOR CUR IN CUR_REG LOOP
+            BEGIN
+                SELECT MAX(TR_METH_CD),  MAX(TR_OWNR), MAX(TR_DCNT), MAX(TO_DATE(TR_STA_DT, 'YYYYMMDD')), MAX(TO_DATE(TR_END_DT, 'YYYYMMDD'))
+                    INTO LREC_TR_MTH.TR_MTH ,  LREC_TR_MTH.TR_MBY ,LREC_TR_MTH.TR_DAYCNT, LREC_TR_MTH.TR_START_DATE, LREC_TR_MTH.TR_END_DATE
+                FROM IFS_NET_REG_TR
+                WHERE (IF_SEQ ) IN ( SELECT MAX(IF_SEQ)
+                                     FROM IFS_NET_REG_TR
+                                     WHERE TRPR_CD = CUR.TRPR_CD 
+                                       AND TRPR_DEGR = CUR.TRPR_DEGR ) ;
+
+                MERGE INTO HRD_BSK_REG  USING DUAL  ON ( HRD_BSK_REG.BPL_NO = CUR.BPL_NO 
+                                                     AND HRD_BSK_REG.TRNEE_CD = CUR.TRP_IDNT_CD
+                                                     AND HRD_BSK_REG.TP_CD = CUR.TRPR_CD
+                                                     AND HRD_BSK_REG.TP_TME = CUR.TRPR_DEGR)
+                WHEN MATCHED THEN
+                    UPDATE SET    
+                        HRD_BSK_REG.TP_NM = CUR.TRPR_NM,
+                        HRD_BSK_REG.HNF_PBLCRP_NM = CUR.R_ORG_CD_NM,
+                        HRD_BSK_REG.HNF_PBLCRP_CD = CUR.R_ORG_CD,
+                        HRD_BSK_REG.EMPLYM_CNTER_NM = CUR.HIR_CTR_NM,
+                        HRD_BSK_REG.EMPLYM_CNTER_CD = CUR.HIR_CTR_CD,
+                        HRD_BSK_REG.TRNEE_NM = CUR.TRP_NM,
+                        HRD_BSK_REG.ACDMCR = CUR.SCHL_STAT,
+                        HRD_BSK_REG.COMPL_SE = CUR.FINI_GB,
+                        HRD_BSK_REG.EMPLYM_STLE = CUR.HIR_TY,
+                        HRD_BSK_REG.TELNO = CUR.TEL_NO,
+                        HRD_BSK_REG.MOBLPHON = CUR.HP_NO,
+                        HRD_BSK_REG.EMAIL = CUR.EMAIL,
+                        HRD_BSK_REG.TOT_TR_CT = CUR.TOT_TR_CST,
+                        HRD_BSK_REG.RETUN_TR_CT = CUR.SPT_TR_CST,
+                        HRD_BSK_REG.BDRD_CT = CUR.LV_CST,
+                        HRD_BSK_REG.TR_ALLWNC = CUR.TR_ALW,
+                        HRD_BSK_REG.BPL_NM = CUR.BPL_NM,
+                        HRD_BSK_REG.CORP_SCALE = CUR.ENT_SCL,
+                        HRD_BSK_REG.TOT_WORK_CNT = CUR.ORDTM_LABRR_CO,
+                        HRD_BSK_REG.LOCPLC_ADDR = CUR.LNM_ADRES,
+                        HRD_BSK_REG.PAIDLV_YN = CUR.PAY_VAC_YN,
+                        HRD_BSK_REG.PAIDLV_SPORT_CT = CUR.PAY_VAC_SPT_CST,
+                        HRD_BSK_REG.ALTMP_SPORT_YN = CUR.AHMP_REG_YN,
+                        HRD_BSK_REG.ALTMP_SPORT_CT = CUR.ALT_HR_SPT_CST,
+                        HRD_BSK_REG.REGION_HRD_CMIT = CUR.HRD_COMM_NM,
+                        HRD_BSK_REG.PRTNR_TRINSTT_NM = CUR.PNR_TRNN_NM,
+                        HRD_BSK_REG.PRTNR_TR_INSTT_CD = CUR.PNR_TRNN_CD,
+                        HRD_BSK_REG.PRTNR_TRINSTT_TYPE = CUR.PNR_TRNN_TY,
+                        HRD_BSK_REG.EMPLYM_STLE1 = CUR.HIR_TY1,
+                        HRD_BSK_REG.CNDATAOCC_DT = CUR.AP_DEAL_DT,
+                        HRD_BSK_REG.CNDATAOCC_STATUS = CUR.AP_DEAL_STATE,
+                        HRD_BSK_REG.ANYTM_REQST_YN = CUR.AYTM_RQUT_YN,
+                        HRD_BSK_REG.TR_START_DATE = LREC_TR_MTH.TR_START_DATE,
+                        HRD_BSK_REG.TR_END_DATE = LREC_TR_MTH.TR_END_DATE,
+                        HRD_BSK_REG.TR_DAYCNT = LREC_TR_MTH.TR_DAYCNT,
+                        HRD_BSK_REG.TR_MTH = LREC_TR_MTH.TR_MTH,
+                        HRD_BSK_REG.TR_MBY = LREC_TR_MTH.TR_MBY
+                WHEN NOT MATCHED THEN
+                    INSERT
+                    ( BPL_NO           , TRNEE_CD          , TP_CD          , TP_TME         , TP_NM           ,
+                      HNF_PBLCRP_NM    , HNF_PBLCRP_CD     , EMPLYM_CNTER_NM, EMPLYM_CNTER_CD, TRNEE_NM        ,
+                      ACDMCR           , COMPL_SE          , EMPLYM_STLE    , TELNO          , MOBLPHON        ,
+                      EMAIL            , TOT_TR_CT         , RETUN_TR_CT    , BDRD_CT        , TR_ALLWNC       ,
+                      BPL_NM           , CORP_SCALE        , TOT_WORK_CNT   , LOCPLC_ADDR    , PAIDLV_YN       ,
+                      PAIDLV_SPORT_CT  , ALTMP_SPORT_YN    , ALTMP_SPORT_CT , REGION_HRD_CMIT, PRTNR_TRINSTT_NM,
+                      PRTNR_TR_INSTT_CD, PRTNR_TRINSTT_TYPE, EMPLYM_STLE1   , CNDATAOCC_DT   , CNDATAOCC_STATUS,
+                      ANYTM_REQST_YN   , TR_START_DATE     , TR_END_DATE    , TR_DAYCNT      , TR_MTH          ,
+                      TR_MBY ) 
+                    VALUES
+                    ( CUR.BPL_NO         , CUR.TRP_IDNT_CD          , CUR.TRPR_CD            , CUR.TRPR_DEGR        , CUR.TRPR_NM       ,
+                      CUR.R_ORG_CD_NM    , CUR.R_ORG_CD             , CUR.HIR_CTR_NM         , CUR.HIR_CTR_CD       , CUR.TRP_NM        ,
+                      CUR.SCHL_STAT      , CUR.FINI_GB              , CUR.HIR_TY             , CUR.TEL_NO           , CUR.HP_NO         ,
+                      CUR.EMAIL          , CUR.TOT_TR_CST           , CUR.SPT_TR_CST         , CUR.LV_CST           , CUR.TR_ALW        ,
+                      CUR.BPL_NM         , CUR.ENT_SCL              , CUR.ORDTM_LABRR_CO     , CUR.LNM_ADRES        , CUR.PAY_VAC_YN    ,
+                      CUR.PAY_VAC_SPT_CST, CUR.AHMP_REG_YN          , CUR.ALT_HR_SPT_CST     , CUR.HRD_COMM_NM      , CUR.PNR_TRNN_NM   ,
+                      CUR.PNR_TRNN_CD    , CUR.PNR_TRNN_TY          , CUR.HIR_TY1            , CUR.AP_DEAL_DT       , CUR.AP_DEAL_STATE ,
+                      CUR.AYTM_RQUT_YN   , LREC_TR_MTH.TR_START_DATE, LREC_TR_MTH.TR_END_DATE, LREC_TR_MTH.TR_DAYCNT, LREC_TR_MTH.TR_MTH,
+                      LREC_TR_MTH.TR_MBY );
+                      
+                -- 직업훈련여부 업데이트      
+                P_UPD_BSK_OCCP_TR_YN(CUR.BPL_NO);
+            EXCEPTION
+                WHEN PARENT_NOT_FOUND THEN
+                    IF LREC_BATCH_LOG.RESULT_MSSAGE IS NULL THEN
+                        LREC_BATCH_LOG.RESULT_MSSAGE := SQLERRM ||' ';
+                    END IF;    
+                    LREC_BATCH_LOG.RESULT_MSSAGE   :=  LREC_BATCH_LOG.RESULT_MSSAGE||CUR.BPL_NO||',';
+                    iCNT := iCNT - 1;
+                WHEN OTHERS THEN
+                    LREC_BATCH_LOG.OPERT_CO        := NULL;
+                    LREC_BATCH_LOG.OPERT_RESULT    := 'FAIL';
+                    LREC_BATCH_LOG.RESULT_MSSAGE   := SQLERRM;
+                    LREC_BATCH_LOG.OPERT_START_DT  := NULL ;
+                    LREC_BATCH_LOG.OPERT_END_DT    := SYSDATE;
+                    PKG_BATCH_LOG.P_UPD_LOG(LREC_BATCH_LOG);
+
+                RAISE_APPLICATION_ERROR( -20001, LREC_BATCH_LOG.RESULT_MSSAGE);            
+            END ;        
+            iCNT := iCNT + 1;
+        END LOOP;
+
+        COMMIT;
+        --=========================================
+        -- 종료 로그 기록        
+        LREC_BATCH_LOG.OPERT_CO        := iCNT;
+        LREC_BATCH_LOG.OPERT_RESULT    := 'DONE';
+        IF LREC_BATCH_LOG.RESULT_MSSAGE IS NULL THEN
+            LREC_BATCH_LOG.RESULT_MSSAGE   := '지역산업맞춤 훈련생 자료 구축 완료 되었습니다.';
+        END IF;
+        LREC_BATCH_LOG.OPERT_END_DT    := SYSDATE ;
+        PKG_BATCH_LOG.P_UPD_LOG(LREC_BATCH_LOG);
+
+    EXCEPTION WHEN OTHERS THEN
+        ROLLBACK ;    
+    END P_IFS_NET_DATA_OGNZ;
+    
+    -- 직업훈련여부 업데이트
+    PROCEDURE P_UPD_BSK_OCCP_TR_YN(P_BPL_NO IN VARCHAR2) IS
+    V_SQLERRM        VARCHAR2(200);
+    V_OCCP_TR_YN     HRD_BSK.OCCP_TR_YN%TYPE ;
+    V_TOT_WORK_CNT   HRD_BSK.TOT_WORK_CNT%TYPE ;
+    BEGIN
+        
+        SELECT NVL(OCCP_TR_YN,'N'), TOT_WORK_CNT
+            INTO V_OCCP_TR_YN, V_TOT_WORK_CNT
+        FROM HRD_BSK 
+        WHERE BPL_NO = P_BPL_NO;
+        
+        IF V_OCCP_TR_YN = 'N' THEN
+            UPDATE HRD_BSK
+               SET OCCP_TR_YN = 'Y'
+            WHERE BPL_NO = P_BPL_NO;
+            
+            /*훈련을 받은 기업으로 분류 작업*/
+            IF V_TOT_WORK_CNT > 0 THEN
+                PKG_CL_ATCM.P_AUTO_CL_PROC(P_BPL_NO, V_TOT_WORK_CNT);
+            END IF;
+        END IF;
+        
+    EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            NULL ;
+        WHEN OTHERS THEN
+            V_SQLERRM := 'P_UPD_BSK_OCCP_TR_YN =>'||SQLERRM ;
+            RAISE_APPLICATION_ERROR( -20001, V_SQLERRM );
+    END P_UPD_BSK_OCCP_TR_YN;
+    
+    PROCEDURE P_IFS_HRDNET_TR_TP IS
+    /*최초 실행 및 엑셀 데이터 임포트 시 구축될 훈련 데이터(특정기간을 기준으로 전체 데이터셋을 구축한다)*/
+    LREC_HRDNET_TP    IFS_HRDNET_TR_TP%ROWTYPE;
+    iBPRTP_IDX           NUMBER := 40000000;
+    iCONTP_IDX           NUMBER := 60000000;
+    
+    CURSOR CUR_TP IS
+    SELECT 
+           CASE WHEN TR_METH_CD LIKE 'S-OJT%' THEN 1
+                ELSE 4 END AS PRTBIZ_IDX,
+        TRPR_CD AS TP_CD,
+        TRPR_NM AS TP_NAME,
+        INO_NM AS TP_OPRINST,
+        LCLS_CD AS NCS_LCLAS_CD,
+        MCLS_CD AS NCS_MCLAS_CD,
+        SCLS_CD AS NCS_SCLAS_CD,
+        TR_DCNT AS TR_DAYCNT,
+        NULL AS FTHTEC_CATE,
+        NVL(MCLS_NM, JKIND_MCLS_NM) AS APPLY_INDUTY,
+        (SELECT TR_SFE FROM (SELECT ROW_NUMBER() OVER ( ORDER BY LENGTH(TR_SFE) DESC ) AS RNUM, TR_SFE FROM VIEW_HRDNET_CN WHERE TP_CD = TRPR_CD) WHERE RNUM = 1) AS TR_SFE,
+        NULL    AS XPTEFFECT,
+        (SELECT TR_GOAL FROM (SELECT ROW_NUMBER() OVER ( ORDER BY LENGTH(TR_GOAL) DESC ) AS RNUM, TR_GOAL FROM VIEW_HRDNET_CN WHERE TP_CD = TRPR_CD) WHERE RNUM = 1) AS TR_GOAL,
+        (SELECT TRNREQM FROM (SELECT ROW_NUMBER() OVER ( ORDER BY LENGTH(TRNREQM) DESC ) AS RNUM, TRNREQM FROM VIEW_HRDNET_CN WHERE TP_CD = TRPR_CD) WHERE RNUM = 1) AS TRNREQM,
+        TRTM AS TRTM
+    FROM IFS_NET_BPR_TR
+    WHERE (TRPR_CD,TRPR_DEGR ) IN ( SELECT TRPR_CD, MAX(TRPR_DEGR)
+                                    FROM IFS_NET_BPR_TR
+                                      WHERE TRAORTN_STTUS_CD NOT IN ('B248') --폐강
+                                      AND (RCOGN_EPTP_DE >= '20220101' OR RCOGN_EPTP_DE IS NULL)
+                                    GROUP BY   TRPR_CD)
+    UNION ALL
+    SELECT 
+        6 AS PRTBIZ_IDX,
+        TRPR_CD AS TP_CD,
+        TRPR_NM AS TP_NAME,
+        INO_NM AS TP_OPRINST,
+        NCS_LRCL_CD AS NCS_LCLAS_CD,
+        NCS_MLSF_CD AS NCS_MCLAS_CD,
+        NCS_SCLA_CD AS NCS_SCLAS_CD,
+        TR_DCNT AS TR_DAYCNT,
+        NULL    AS FTHTEC_CATE,
+        NVL(NCS_MCN, JKIND_MCLS_NM) AS APPLY_INDUTY,
+        (SELECT TR_SFE FROM (SELECT ROW_NUMBER() OVER ( ORDER BY LENGTH(TR_SFE) DESC ) AS RNUM, TR_SFE FROM VIEW_HRDNET_CN WHERE TP_CD = TRPR_CD) WHERE RNUM = 1) AS TR_SFE,
+        NULL    AS XPTEFFECT,
+        (SELECT TR_GOAL FROM (SELECT ROW_NUMBER() OVER ( ORDER BY LENGTH(TR_GOAL) DESC ) AS RNUM, TR_GOAL FROM VIEW_HRDNET_CN WHERE TP_CD = TRPR_CD) WHERE RNUM = 1) AS TR_GOAL,
+        (SELECT TRNREQM FROM (SELECT ROW_NUMBER() OVER ( ORDER BY LENGTH(TRNREQM) DESC ) AS RNUM, TRNREQM FROM VIEW_HRDNET_CN WHERE TP_CD = TRPR_CD) WHERE RNUM = 1) AS TRNREQM,
+        TRTM AS TRTM
+    FROM IFS_NET_CON_TR
+    WHERE (TRPR_CD,TRPR_DEGR ) IN (SELECT TRPR_CD, MAX(TRPR_DEGR)
+                                   FROM IFS_NET_CON_TR
+--                                   WHERE TRPR_CD LIKE 'ABA202%'                                     
+                                    GROUP BY TRPR_CD );
+    BEGIN
+    
+        FOR CUR IN CUR_TP LOOP
+            IF CUR.PRTBIZ_IDX  IN ( 1, 4 ) THEN
+                iBPRTP_IDX := iBPRTP_IDX + 1;
+                LREC_HRDNET_TP.TP_IDX := iBPRTP_IDX ;
+            ELSE
+                iCONTP_IDX := iCONTP_IDX + 1;
+                LREC_HRDNET_TP.TP_IDX := iCONTP_IDX ;
+            END IF;
+            LREC_HRDNET_TP.TP_CD        := CUR.TP_CD        ;
+            LREC_HRDNET_TP.PRTBIZ_IDX   := CUR.PRTBIZ_IDX   ;
+            LREC_HRDNET_TP.TP_NAME      := CUR.TP_NAME        ;
+            LREC_HRDNET_TP.TP_OPRINST   := CUR.TP_OPRINST   ;
+            LREC_HRDNET_TP.NCS_LCLAS_CD := CUR.NCS_LCLAS_CD ;
+            LREC_HRDNET_TP.NCS_MCLAS_CD := CUR.NCS_MCLAS_CD ;
+            LREC_HRDNET_TP.NCS_SCLAS_CD := CUR.NCS_SCLAS_CD ;
+            LREC_HRDNET_TP.TR_DAYCNT    := CUR.TR_DAYCNT    ;
+            LREC_HRDNET_TP.FTHTEC_CATE  := CUR.FTHTEC_CATE  ;
+            LREC_HRDNET_TP.APPLY_INDUTY := CUR.APPLY_INDUTY ;
+            LREC_HRDNET_TP.REGI_DATE    := SYSDATE          ;
+             
+            BEGIN
+                SELECT  TRAING_PURPS_CN AS TR_GOAL, MAIN_TRAING_CN AS TR_SFE, TRAING_TRGET_RQISIT_CN AS TRNREQM
+                      , TOT_TRAING_DYCT, TOT_TRAING_TIME
+                    INTO LREC_HRDNET_TP.TR_GOAL, LREC_HRDNET_TP.TR_SFE, LREC_HRDNET_TP.TRNREQM  
+                       , LREC_HRDNET_TP.TR_DAYCNT, LREC_HRDNET_TP.TRTM 
+                FROM IFS_NCS_DETAIL
+                WHERE TRACSE_ID = CUR.TP_CD ;
+                IF NVL(LREC_HRDNET_TP.TR_DAYCNT,0) = 0  AND CUR.TR_DAYCNT > 0 THEN
+                    LREC_HRDNET_TP.TR_DAYCNT    := CUR.TR_DAYCNT    ;
+                END IF;
+                IF NVL(LREC_HRDNET_TP.TRTM,0) = 0  AND CUR.TRTM > 0 THEN
+                    LREC_HRDNET_TP.TRTM    := CUR.TRTM    ;
+                END IF;
+            EXCEPTION WHEN NO_DATA_FOUND THEN
+                BEGIN
+                    SELECT  TRAING_PURPS_CN AS TR_GOAL, MAIN_TRAING_CN AS TR_SFE, TRAING_TRGET_RQISIT_CN AS TRNREQM
+                           , TOT_TRAING_DYCT, TOT_TRAING_TIME
+                        INTO  LREC_HRDNET_TP.TR_GOAL, LREC_HRDNET_TP.TR_SFE, LREC_HRDNET_TP.TRNREQM 
+                            , LREC_HRDNET_TP.TR_DAYCNT, LREC_HRDNET_TP.TRTM 
+                    FROM IFS_NCS_DETAIL
+                    WHERE TRACSE_ID = CUR.TP_CD ;
+                    
+                    IF NVL(LREC_HRDNET_TP.TR_DAYCNT,0) = 0  AND CUR.TR_DAYCNT > 0 THEN
+                        LREC_HRDNET_TP.TR_DAYCNT    := CUR.TR_DAYCNT    ;
+                    END IF;
+                    IF NVL(LREC_HRDNET_TP.TRTM,0) = 0  AND CUR.TRTM > 0 THEN
+                        LREC_HRDNET_TP.TRTM    := CUR.TRTM    ;
+                    END IF;
+                    
+                EXCEPTION WHEN NO_DATA_FOUND THEN
+                    LREC_HRDNET_TP.TR_SFE       := CUR.TR_SFE       ;
+                    LREC_HRDNET_TP.XPTEFFECT    := NULL             ;
+                    LREC_HRDNET_TP.TR_GOAL      := CUR.TR_GOAL      ;
+                    LREC_HRDNET_TP.TRNREQM      := CUR.TRNREQM      ;
+                    LREC_HRDNET_TP.TR_DAYCNT    := CUR.TR_DAYCNT    ;
+                    LREC_HRDNET_TP.TRTM         := CUR.TRTM         ;
+                END ;    
+            END;
+            
+            MERGE INTO IFS_HRDNET_TR_TP TP  USING DUAL  ON ( TP.TP_CD = LREC_HRDNET_TP.TP_CD )
+            WHEN MATCHED THEN
+                UPDATE SET
+                    PRTBIZ_IDX   = LREC_HRDNET_TP.PRTBIZ_IDX   ,
+                    TP_IDX       = LREC_HRDNET_TP.TP_IDX       ,
+                    TP_NAME      = LREC_HRDNET_TP.TP_NAME      ,
+                    TP_OPRINST   = LREC_HRDNET_TP.TP_OPRINST   ,
+                    NCS_LCLAS_CD = LREC_HRDNET_TP.NCS_LCLAS_CD ,
+                    NCS_MCLAS_CD = LREC_HRDNET_TP.NCS_MCLAS_CD ,
+                    NCS_SCLAS_CD = LREC_HRDNET_TP.NCS_SCLAS_CD ,
+                    TR_DAYCNT    = LREC_HRDNET_TP.TR_DAYCNT    ,
+                    FTHTEC_CATE  = LREC_HRDNET_TP.FTHTEC_CATE  ,
+                    APPLY_INDUTY = LREC_HRDNET_TP.APPLY_INDUTY ,
+                    TR_SFE       = LREC_HRDNET_TP.TR_SFE       ,
+                    XPTEFFECT    = LREC_HRDNET_TP.XPTEFFECT    ,
+                    TR_GOAL      = LREC_HRDNET_TP.TR_GOAL      ,
+                    TRNREQM      = LREC_HRDNET_TP.TRNREQM      ,
+                    TRTM         = LREC_HRDNET_TP.TRTM         ,
+                    REGI_DATE    = LREC_HRDNET_TP.REGI_DATE    
+            WHEN NOT MATCHED THEN
+                INSERT 
+                (TP_CD       , PRTBIZ_IDX  , TP_IDX      , TP_NAME     , 
+                 TP_OPRINST  , NCS_LCLAS_CD, NCS_MCLAS_CD, NCS_SCLAS_CD, 
+                 TR_DAYCNT   , FTHTEC_CATE , APPLY_INDUTY, TR_SFE      , 
+                 XPTEFFECT   , TR_GOAL     , TRNREQM     , TRTM        , 
+                 REGI_DATE   )
+                 VALUES
+                (LREC_HRDNET_TP.TP_CD       , LREC_HRDNET_TP.PRTBIZ_IDX  , LREC_HRDNET_TP.TP_IDX      , LREC_HRDNET_TP.TP_NAME     , 
+                 LREC_HRDNET_TP.TP_OPRINST  , LREC_HRDNET_TP.NCS_LCLAS_CD, LREC_HRDNET_TP.NCS_MCLAS_CD, LREC_HRDNET_TP.NCS_SCLAS_CD, 
+                 LREC_HRDNET_TP.TR_DAYCNT   , LREC_HRDNET_TP.FTHTEC_CATE , LREC_HRDNET_TP.APPLY_INDUTY, LREC_HRDNET_TP.TR_SFE      , 
+                 LREC_HRDNET_TP.XPTEFFECT   , LREC_HRDNET_TP.TR_GOAL     , LREC_HRDNET_TP.TRNREQM     , LREC_HRDNET_TP.TRTM        , 
+                 LREC_HRDNET_TP.REGI_DATE   ) ;        
+        END LOOP;
+        P_IFS_HRDNET_TR_TP_SUB;
+    END P_IFS_HRDNET_TR_TP;
+
+
+   PROCEDURE P_IFS_HRDNET_TR_TP_DAILY(P_WRT_DATE IN VARCHAR2) IS
+   /*airflow의 배치작업에 의해 구축될 훈련 데이터*/
+    LREC_HRDNET_TP    IFS_HRDNET_TR_TP%ROWTYPE;
+    iBPRTP_IDX           NUMBER;
+    iCONTP_IDX           NUMBER;
+    iIS_TP_IDX           NUMBER;
+    
+    CURSOR CUR_TP IS
+    SELECT 
+           CASE WHEN TR_METH_CD LIKE 'S-OJT%' THEN 1
+                ELSE 4 END AS PRTBIZ_IDX,
+        TRPR_CD AS TP_CD,
+        TRPR_NM AS TP_NAME,
+        INO_NM AS TP_OPRINST,
+        LCLS_CD AS NCS_LCLAS_CD,
+        MCLS_CD AS NCS_MCLAS_CD,
+        SCLS_CD AS NCS_SCLAS_CD,
+        TR_DCNT AS TR_DAYCNT,
+        NULL AS FTHTEC_CATE,
+        NVL(MCLS_NM, JKIND_MCLS_NM) AS APPLY_INDUTY,
+        (SELECT TR_SFE FROM (SELECT ROW_NUMBER() OVER ( ORDER BY LENGTH(TR_SFE) DESC ) AS RNUM, TR_SFE FROM VIEW_HRDNET_CN WHERE TP_CD = TRPR_CD) WHERE RNUM = 1) AS TR_SFE,
+        NULL    AS XPTEFFECT,
+        (SELECT TR_GOAL FROM (SELECT ROW_NUMBER() OVER ( ORDER BY LENGTH(TR_GOAL) DESC ) AS RNUM, TR_GOAL FROM VIEW_HRDNET_CN WHERE TP_CD = TRPR_CD) WHERE RNUM = 1) AS TR_GOAL,
+        (SELECT TRNREQM FROM (SELECT ROW_NUMBER() OVER ( ORDER BY LENGTH(TRNREQM) DESC ) AS RNUM, TRNREQM FROM VIEW_HRDNET_CN WHERE TP_CD = TRPR_CD) WHERE RNUM = 1) AS TRNREQM,
+        TRTM AS TRTM
+    FROM IFS_NET_BPR_TR
+    WHERE (TRPR_CD,TRPR_DEGR, SEQ_NO ) IN ( SELECT TRPR_CD, MAX(TRPR_DEGR), MAX(SEQ_NO)
+                                    FROM IFS_NET_BPR_TR
+                                      WHERE IF_DEAL_DT LIKE P_WRT_DATE || '%'
+                                    GROUP BY   TRPR_CD)
+    UNION ALL
+    SELECT 
+        6 AS PRTBIZ_IDX,
+        TRPR_CD AS TP_CD,
+        TRPR_NM AS TP_NAME,
+        INO_NM AS TP_OPRINST,
+        NCS_LRCL_CD AS NCS_LCLAS_CD,
+        NCS_MLSF_CD AS NCS_MCLAS_CD,
+        NCS_SCLA_CD AS NCS_SCLAS_CD,
+        TR_DCNT AS TR_DAYCNT,
+        NULL    AS FTHTEC_CATE,
+        NVL(NCS_MCN, JKIND_MCLS_NM) AS APPLY_INDUTY,
+        (SELECT TR_SFE FROM (SELECT ROW_NUMBER() OVER ( ORDER BY LENGTH(TR_SFE) DESC ) AS RNUM, TR_SFE FROM VIEW_HRDNET_CN WHERE TP_CD = TRPR_CD) WHERE RNUM = 1) AS TR_SFE,
+        NULL    AS XPTEFFECT,
+        (SELECT TR_GOAL FROM (SELECT ROW_NUMBER() OVER ( ORDER BY LENGTH(TR_GOAL) DESC ) AS RNUM, TR_GOAL FROM VIEW_HRDNET_CN WHERE TP_CD = TRPR_CD) WHERE RNUM = 1) AS TR_GOAL,
+        (SELECT TRNREQM FROM (SELECT ROW_NUMBER() OVER ( ORDER BY LENGTH(TRNREQM) DESC ) AS RNUM, TRNREQM FROM VIEW_HRDNET_CN WHERE TP_CD = TRPR_CD) WHERE RNUM = 1) AS TRNREQM,
+        TRTM AS TRTM
+    FROM IFS_NET_CON_TR
+    WHERE (TRPR_CD,TRPR_DEGR, SEQ_NO ) IN ( SELECT TRPR_CD, MAX(TRPR_DEGR), MAX(SEQ_NO)
+                                   FROM IFS_NET_CON_TR
+                                    WHERE IF_DEAL_DT LIKE P_WRT_DATE || '%'
+                                    GROUP BY TRPR_CD );
+    BEGIN
+        SELECT 
+            MAX(TP_IDX) 
+        INTO iBPRTP_IDX
+        FROM 
+            IFS_HRDNET_TR_TP 
+        WHERE SUBSTR(TP_IDX,0,1) = 4;
+        
+        SELECT 
+            MAX(TP_IDX) 
+        INTO iCONTP_IDX
+        FROM 
+            IFS_HRDNET_TR_TP 
+        WHERE SUBSTR(TP_IDX,0,1) = 6;
+        
+        FOR CUR IN CUR_TP LOOP
+            SELECT TP_IDX INTO iIS_TP_IDX FROM IFS_HRDNET_TR_TP WHERE TP_CD = CUR.TP_CD;
+            IF CUR.PRTBIZ_IDX  IN ( 1, 4 ) THEN
+                IF iIS_TP_IDX IS NOT NULL THEN
+                    iBPRTP_IDX := iIS_TP_IDX;
+                ELSE
+                    iBPRTP_IDX := iBPRTP_IDX + 1;    
+                END IF;                
+                LREC_HRDNET_TP.TP_IDX := iBPRTP_IDX ;
+            ELSE
+                IF iIS_TP_IDX IS NOT NULL THEN
+                    iCONTP_IDX := iIS_TP_IDX;
+                ELSE
+                    iCONTP_IDX := iCONTP_IDX + 1;
+                END IF;                          
+                LREC_HRDNET_TP.TP_IDX := iCONTP_IDX ;
+            END IF;
+            LREC_HRDNET_TP.TP_CD        := CUR.TP_CD        ;
+            LREC_HRDNET_TP.PRTBIZ_IDX   := CUR.PRTBIZ_IDX   ;
+            LREC_HRDNET_TP.TP_NAME      := CUR.TP_NAME        ;
+            LREC_HRDNET_TP.TP_OPRINST   := CUR.TP_OPRINST   ;
+            LREC_HRDNET_TP.NCS_LCLAS_CD := CUR.NCS_LCLAS_CD ;
+            LREC_HRDNET_TP.NCS_MCLAS_CD := CUR.NCS_MCLAS_CD ;
+            LREC_HRDNET_TP.NCS_SCLAS_CD := CUR.NCS_SCLAS_CD ;
+            LREC_HRDNET_TP.TR_DAYCNT    := CUR.TR_DAYCNT    ;
+            LREC_HRDNET_TP.FTHTEC_CATE  := CUR.FTHTEC_CATE  ;
+            LREC_HRDNET_TP.APPLY_INDUTY := CUR.APPLY_INDUTY ;
+            LREC_HRDNET_TP.REGI_DATE    := SYSDATE          ;
+             
+            BEGIN
+                SELECT  TRAING_PURPS_CN AS TR_GOAL, MAIN_TRAING_CN AS TR_SFE, TRAING_TRGET_RQISIT_CN AS TRNREQM
+                      , TOT_TRAING_DYCT, TOT_TRAING_TIME
+                    INTO LREC_HRDNET_TP.TR_GOAL, LREC_HRDNET_TP.TR_SFE, LREC_HRDNET_TP.TRNREQM  
+                       , LREC_HRDNET_TP.TR_DAYCNT, LREC_HRDNET_TP.TRTM 
+                FROM IFS_NCS_DETAIL
+                WHERE TRACSE_ID = CUR.TP_CD ;
+                IF NVL(LREC_HRDNET_TP.TR_DAYCNT,0) = 0  AND CUR.TR_DAYCNT > 0 THEN
+                    LREC_HRDNET_TP.TR_DAYCNT    := CUR.TR_DAYCNT    ;
+                END IF;
+                IF NVL(LREC_HRDNET_TP.TRTM,0) = 0  AND CUR.TRTM > 0 THEN
+                    LREC_HRDNET_TP.TRTM    := CUR.TRTM    ;
+                END IF;
+            EXCEPTION WHEN NO_DATA_FOUND THEN
+                BEGIN
+                    SELECT  TRAING_PURPS_CN AS TR_GOAL, MAIN_TRAING_CN AS TR_SFE, TRAING_TRGET_RQISIT_CN AS TRNREQM
+                           , TOT_TRAING_DYCT, TOT_TRAING_TIME
+                        INTO  LREC_HRDNET_TP.TR_GOAL, LREC_HRDNET_TP.TR_SFE, LREC_HRDNET_TP.TRNREQM 
+                            , LREC_HRDNET_TP.TR_DAYCNT, LREC_HRDNET_TP.TRTM 
+                    FROM IFS_NCS_DETAIL
+                    WHERE TRACSE_ID = CUR.TP_CD ;
+                    
+                    IF NVL(LREC_HRDNET_TP.TR_DAYCNT,0) = 0  AND CUR.TR_DAYCNT > 0 THEN
+                        LREC_HRDNET_TP.TR_DAYCNT    := CUR.TR_DAYCNT    ;
+                    END IF;
+                    IF NVL(LREC_HRDNET_TP.TRTM,0) = 0  AND CUR.TRTM > 0 THEN
+                        LREC_HRDNET_TP.TRTM    := CUR.TRTM    ;
+                    END IF;
+                    
+                EXCEPTION WHEN NO_DATA_FOUND THEN
+                    LREC_HRDNET_TP.TR_SFE       := CUR.TR_SFE       ;
+                    LREC_HRDNET_TP.XPTEFFECT    := NULL             ;
+                    LREC_HRDNET_TP.TR_GOAL      := CUR.TR_GOAL      ;
+                    LREC_HRDNET_TP.TRNREQM      := CUR.TRNREQM      ;
+                    LREC_HRDNET_TP.TR_DAYCNT    := CUR.TR_DAYCNT    ;
+                    LREC_HRDNET_TP.TRTM         := CUR.TRTM         ;
+                END ;    
+            END;
+            
+            MERGE INTO IFS_HRDNET_TR_TP TP  USING DUAL  ON ( TP.TP_CD = LREC_HRDNET_TP.TP_CD )
+            WHEN MATCHED THEN
+                UPDATE SET
+                    PRTBIZ_IDX   = LREC_HRDNET_TP.PRTBIZ_IDX   ,
+                    TP_IDX       = LREC_HRDNET_TP.TP_IDX       ,
+                    TP_NAME      = LREC_HRDNET_TP.TP_NAME      ,
+                    TP_OPRINST   = LREC_HRDNET_TP.TP_OPRINST   ,
+                    NCS_LCLAS_CD = LREC_HRDNET_TP.NCS_LCLAS_CD ,
+                    NCS_MCLAS_CD = LREC_HRDNET_TP.NCS_MCLAS_CD ,
+                    NCS_SCLAS_CD = LREC_HRDNET_TP.NCS_SCLAS_CD ,
+                    TR_DAYCNT    = LREC_HRDNET_TP.TR_DAYCNT    ,
+                    FTHTEC_CATE  = LREC_HRDNET_TP.FTHTEC_CATE  ,
+                    APPLY_INDUTY = LREC_HRDNET_TP.APPLY_INDUTY ,
+                    TR_SFE       = LREC_HRDNET_TP.TR_SFE       ,
+                    XPTEFFECT    = LREC_HRDNET_TP.XPTEFFECT    ,
+                    TR_GOAL      = LREC_HRDNET_TP.TR_GOAL      ,
+                    TRNREQM      = LREC_HRDNET_TP.TRNREQM      ,
+                    TRTM         = LREC_HRDNET_TP.TRTM         ,
+                    REGI_DATE    = LREC_HRDNET_TP.REGI_DATE    
+            WHEN NOT MATCHED THEN
+                INSERT 
+                (TP_CD       , PRTBIZ_IDX  , TP_IDX      , TP_NAME     , 
+                 TP_OPRINST  , NCS_LCLAS_CD, NCS_MCLAS_CD, NCS_SCLAS_CD, 
+                 TR_DAYCNT   , FTHTEC_CATE , APPLY_INDUTY, TR_SFE      , 
+                 XPTEFFECT   , TR_GOAL     , TRNREQM     , TRTM        , 
+                 REGI_DATE   )
+                 VALUES
+                (LREC_HRDNET_TP.TP_CD       , LREC_HRDNET_TP.PRTBIZ_IDX  , LREC_HRDNET_TP.TP_IDX      , LREC_HRDNET_TP.TP_NAME     , 
+                 LREC_HRDNET_TP.TP_OPRINST  , LREC_HRDNET_TP.NCS_LCLAS_CD, LREC_HRDNET_TP.NCS_MCLAS_CD, LREC_HRDNET_TP.NCS_SCLAS_CD, 
+                 LREC_HRDNET_TP.TR_DAYCNT   , LREC_HRDNET_TP.FTHTEC_CATE , LREC_HRDNET_TP.APPLY_INDUTY, LREC_HRDNET_TP.TR_SFE      , 
+                 LREC_HRDNET_TP.XPTEFFECT   , LREC_HRDNET_TP.TR_GOAL     , LREC_HRDNET_TP.TRNREQM     , LREC_HRDNET_TP.TRTM        , 
+                 LREC_HRDNET_TP.REGI_DATE   ) ;        
+        END LOOP;
+    END P_IFS_HRDNET_TR_TP_DAILY;
+
+    PROCEDURE P_IFS_HRDNET_TR_TP_SUB AS 
+            CURSOR C IS
+            SELECT 
+                A.*
+            FROM VIEW_HRDNET_TR_TP_SUB A;                            
+        BEGIN           
+            /*
+            1. 엑셀 데이터 중 넘버링이 다른 동의어컬럼을 행으로 나눈 VIEW테이블을 물리적인 테이블에 MERGE한다.
+               이 과정에서 TP_IDX는 0으로 넣는다.
+            */
+            FOR CUR IN C LOOP
+                MERGE INTO IFS_HRDNET_TR_TP_SUB A
+                    USING DUAL
+                        ON (A.TP_CD = CUR.TP_CD AND A.TP_COURSE_IDX = CUR.TP_COURSE_IDX)
+                WHEN MATCHED THEN
+                UPDATE SET
+                    A.PRTBIZ_IDX = CUR.PRTBIZ_IDX,   
+                    A.TP_IDX = (SELECT TP_IDX FROM IFS_HRDNET_TR_TP WHERE TP_CD = CUR.TP_CD),
+                    A.COURSE_NO = CUR.COURSE_NO,
+                    A.COURSE_NAME = CUR.COURSE_NAME,
+                    A.TIME = CUR.TIME,
+                    A.CN = CUR.CN,
+                    A.TCHMETHOD = CUR.TCHMETHOD,
+                    A.REMARKS = CUR.REMARKS,
+                    A.ISDELETE = CUR.ISDELETE,
+                    A.REGI_IDX = CUR.REGI_IDX,
+                    A.REGI_ID = CUR.REGI_ID,
+                    A.REGI_NAME = CUR.REGI_NAME,
+                    A.REGI_DATE = CUR.REGI_DATE,
+                    A.REGI_IP = CUR.REGI_IP,
+                    A.LAST_MODI_IDX = CUR.LAST_MODI_IDX,
+                    A.LAST_MODI_ID = CUR.LAST_MODI_ID,
+                    A.LAST_MODI_NAME = CUR.LAST_MODI_NAME,
+                    A.LAST_MODI_DATE = CUR.LAST_MODI_DATE,
+                    A.LAST_MODI_IP = CUR.LAST_MODI_IP
+                WHEN NOT MATCHED THEN
+                INSERT
+                (
+                    PRTBIZ_IDX,       TP_IDX,         TP_CD,           TP_COURSE_IDX,
+                    COURSE_NO,        COURSE_NAME,    TIME,            CN,
+                    TCHMETHOD,        REMARKS,        ISDELETE,        REGI_IDX,
+                    REGI_ID,          REGI_NAME,      REGI_DATE,       REGI_IP,
+                    LAST_MODI_IDX,    LAST_MODI_ID,   LAST_MODI_NAME,  LAST_MODI_DATE,
+                    LAST_MODI_IP
+                    )
+                VALUES(
+                    CUR.PRTBIZ_IDX,       (SELECT TP_IDX FROM IFS_HRDNET_TR_TP WHERE TP_CD = CUR.TP_CD),         CUR.TP_CD,           CUR.TP_COURSE_IDX,
+                    CUR.COURSE_NO,        CUR.COURSE_NAME,    CUR.TIME,            CUR.CN,
+                    CUR.TCHMETHOD,        CUR.REMARKS,        CUR.ISDELETE,        CUR.REGI_IDX,
+                    CUR.REGI_ID,          CUR.REGI_NAME,      CUR.REGI_DATE,       CUR.REGI_IP,
+                    CUR.LAST_MODI_IDX,    CUR.LAST_MODI_ID,   CUR.LAST_MODI_NAME,  CUR.LAST_MODI_DATE,
+                    CUR.LAST_MODI_IP
+                    );        
+            END LOOP;                
+        COMMIT;
+    END P_IFS_HRDNET_TR_TP_SUB;
+    
+
+END ;

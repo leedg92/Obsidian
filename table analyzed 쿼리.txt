@@ -1,0 +1,4 @@
+analyze table "HRDDOCTOR"."HRD_BSK" compute statistics;
+
+
+all_tables로 전체 테이블 이름 찾고 프로시저로 싹다 돌리기!( 저녁에)

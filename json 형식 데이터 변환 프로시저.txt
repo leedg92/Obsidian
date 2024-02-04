@@ -1,0 +1,32 @@
+create or replace procedure PROC_AI(strJson IN CLOB, refResult OUT SYS_REFCURSOR) IS
+
+
+BEGIN
+
+OPEN refResult FOR
+WITH JSON AS (SELECT REPLACE(strJson,'\','') AS DOC FROM DUAL ) 
+SELECT 
+    A.BIZR_CD AS PRTBIZ_IDX,
+    A.BIZR_RANK AS RANK,
+    (SELECT PRTBIZ_NAME FROM HRD_DGNS_PRTBIZ WHERE PRTBIZ_IDX = A.BIZR_CD) AS RCTR_NAME,
+    (SELECT INTRO FROM HRD_DGNS_PRTBIZ WHERE PRTBIZ_IDX = A.BIZR_CD) AS INTRO,
+    (SELECT CONSIDER FROM HRD_DGNS_PRTBIZ WHERE PRTBIZ_IDX = A.BIZR_CD) AS CONSIDER,
+    A.TP_CD AS TP_CD,
+    B.TP_IDX AS TP_IDX,
+    B.TP_NAME AS TP_NAME,
+    A.NCS_CD4,
+    A.TP_CD_RANK,
+    A.BPL_NO
+FROM 
+    JSON_TABLE( (SELECT DOC FROM JSON), 
+    '$[*]' COLUMNS ( BIZR_CD PATH '$.BIZR_CD' , 
+                    BIZR_RANK PATH '$.BIZR_RANK' ,
+                    NCS_CD4 PATH '$.NCS_CD4' , 
+                    TP_CD_RANK PATH '$.TP_CD_RANK' ,
+                    BPL_NO PATH '$.BPL_NO' , 
+                    TP_CD PATH '$.TP_CD' ) ) A,
+                    IFS_HRDNET_TR_TP B 
+                        WHERE A.TP_CD = B.TP_CD (+) ;
+
+
+END;

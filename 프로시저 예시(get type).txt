@@ -1,0 +1,27 @@
+create or replace FUNCTION FN_GET_DATA_TYPE( I_TABLE_NAME IN VARCHAR2, I_COLUMN_NAME IN VARCHAR2) RETURN VARCHAR2 IS
+
+RET_VALUE   VARCHAR2(100) := NULL;
+
+BEGIN
+    SELECT DATA_TYPE||
+           (CASE DATA_TYPE WHEN 'NVARCHAR2' THEN '('||TO_CHAR(DATA_LENGTH/2)||')'
+                           WHEN 'NCHAR' THEN '('||TO_CHAR(DATA_LENGTH/2)||')'
+                           WHEN 'CHAR' THEN '('||TO_CHAR(DATA_LENGTH)||')'
+                           WHEN 'VARCHAR2' THEN '('||TO_CHAR(DATA_LENGTH)||')'
+                           WHEN 'DATE' THEN ''
+                           WHEN 'CLOB' THEN ''
+                           WHEN 'NCLOB' THEN ''
+                           WHEN 'BLOB' THEN ''
+                           WHEN 'NUMBER' THEN CASE WHEN DATA_PRECISION IS NULL THEN '' 
+                                              ELSE (CASE WHEN NVL(DATA_SCALE,0) > 0 THEN  '('||TO_CHAR(DATA_PRECISION)||','||TO_CHAR(DATA_SCALE)||')'
+                                                         ELSE '('||TO_CHAR(DATA_PRECISION)||')' END )
+                                              END
+              END) AS DATA_TYPE
+    INTO RET_VALUE
+    FROM USER_TAB_COLUMNS
+    WHERE TABLE_NAME = I_TABLE_NAME
+      AND COLUMN_NAME = I_COLUMN_NAME ;
+
+    RETURN RET_VALUE ;
+
+END;
