@@ -1,0 +1,10 @@
+	<resultMap id="aiResultMap" type="dataMap"></resultMap>	
+	<select id="getAiRcommendRankList" parameterType="java.util.HashMap" statementType="CALLABLE" >
+
+		{ 
+			call PROC_AI( #{RESPONSE, mode=IN, jdbcType=CLOB} , 
+						  #{apiName, mode=IN, jdbcType=VARCHAR} ,
+						  #{cursor, mode=OUT, jdbcType=CURSOR, javaType=java.sql.ResultSet, resultMap=aiResultMap}  
+			   		     )
+        }
+	</select>	

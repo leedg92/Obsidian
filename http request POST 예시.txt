@@ -1,0 +1,39 @@
+	private String postRequest(String rankUrl, String BPL_NO) throws Exception {
+		//setting
+		URL url = new URL(rankUrl);
+		HttpURLConnection con = (HttpURLConnection) url.openConnection();
+		con.setRequestMethod("POST");
+		con.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+		con.setRequestProperty("Accept-Charset", "UTF-8");
+		
+		con.setDoOutput(true);
+		
+		//call
+		JSONObject param = new JSONObject();
+		param.put("user_id", BPL_NO);
+		System.out.println(param.toString());
+		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(con.getOutputStream()));
+		bw.write(param.toString());
+		bw.flush();
+		bw.close();
+		
+		//parse
+		BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+		System.out.println(in);
+		System.out.println(in);
+		String line = null;
+		StringBuilder sb = new StringBuilder();
+		while((line = in.readLine()) != null) {
+			sb.append(line);
+		}
+		
+		in.close();
+		con.disconnect();
+		
+		String response = sb.toString();
+		
+		
+		return response;		
+
+		
+	}
