@@ -21,7 +21,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "무제 파일.md",
+                "file": "Cron.md",
                 "mode": "source",
                 "source": false
               }
@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "무제 파일.md",
+                "file": "Cron.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -111,7 +111,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "무제 파일.md",
+                "file": "Cron.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -134,7 +134,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "무제 파일.md"
+                "file": "Cron.md"
               }
             }
           }
@@ -155,8 +155,9 @@
       "command-palette:명령어 팔레트 열기": false
     }
   },
-  "active": "572644b5df655503",
+  "active": "ba77188256ea9283",
   "lastOpenFiles": [
+    "무제 파일.md",
     "Airflow/Airflow란.md",
     "Obisidian/옵시디언.md",
     "Obisidian/옵시디언 설치 플러그인.md",
@@ -167,7 +168,6 @@
     "SLI_2023_HRDK_Airflow_교육자료.pdf",
     "README.md",
     "Pasted image 20240127140254.png",
-    "무제 파일.md",
     "Obisidian/git 원격 저장소와 옵시디언 연결하기.md",
     "Obisidian/옵시디언이란.md",
     "Cron.md",
