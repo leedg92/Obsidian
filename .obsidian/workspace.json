@@ -21,7 +21,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Cron.md",
+                "file": "README.md",
                 "mode": "source",
                 "source": false
               }
@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Cron.md",
+                "file": "README.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -111,7 +111,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Cron.md",
+                "file": "README.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -134,7 +134,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Cron.md"
+                "file": "README.md"
               }
             }
           }
@@ -155,8 +155,12 @@
       "command-palette:명령어 팔레트 열기": false
     }
   },
-  "active": "ba77188256ea9283",
+  "active": "572644b5df655503",
   "lastOpenFiles": [
+    "SLI_2023_HRDK_Airflow_교육자료.pdf",
+    "README.md",
+    "Pasted image 20240127140254.png",
+    "Cron.md",
     "무제 파일.md",
     "Airflow/Airflow란.md",
     "Obisidian/옵시디언.md",
@@ -165,12 +169,8 @@
     "node.js/javaScript.md",
     "Airflow/DAG샘플.md",
     "Airflow/산인공DAG.md",
-    "SLI_2023_HRDK_Airflow_교육자료.pdf",
-    "README.md",
-    "Pasted image 20240127140254.png",
     "Obisidian/git 원격 저장소와 옵시디언 연결하기.md",
     "Obisidian/옵시디언이란.md",
-    "Cron.md",
     "새 텍스트 문서.txt",
     "exam01-db2db 4.py",
     "exam04 3.py",
