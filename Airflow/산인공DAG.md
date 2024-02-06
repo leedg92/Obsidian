@@ -1,5 +1,5 @@
 
-- 근로복지공단 - 기업정보 (File To DB) ![[COMWEL-PIPELINE-file2db.py]]
+- 근로복지공단 - 기업정보 test (File To DB) ![[COMWEL-PIPELINE-file2db.py]]
 
 - HRD4U - 사업(DB To DB, 프로시저 호출만으로 변경됨)![[HRD4U-PIPELINE-db2db.py]]
 
