@@ -7,8 +7,15 @@
 
 #### DONE
  1. aipknu 데이터베이스에 적재 및 서치스튜디오 설정에 디비 세팅 이분화(aipknu, aisearch)
-     -  192.168.110.121(root/salt01!) 푸티 접속 후 /home/aisearch/searchstudio로 경로 이동
-       ![[Pasted image 20240206122704.png]]
-         이 세개 폴더의 conf 폴더 안의 database.properties를 vi로 열고 주석을 해제하면 db를 바꿀 수 있다. 
-         이후 startup-unix 폴더로 이동해 .sh파일을 모두 restart한다 (파일명 restart)
-         
+ 2. 이주호주임에게 받은 인천대 소스 세팅
+	 - 이 과정에서 학사디비(INUDB, STARINUDB)의 디비커넥션은 주석처리함(이동근 주석 으로 통일)
+3. 인천대 학생의 정보와 관련되어서 돌아가는 비즈니스 로직은 우선 메인화면으로 보내줄때만 주석 처리해놨음(추후에 어떻게 처리할지 정해야할듯)
+
+
+
+#### 정리
+ - 개발환경과 인천대학교 참고 디비 변경 법
+	 - 192.168.110.121(root/salt01!) 푸티 접속 후 /home/aisearch/searchstudio로 경로 이동
+	       ![[Pasted image 20240206122704.png]]
+	     이 세개 폴더의 conf 폴더 안의 database.properties를 vi로 열고 주석을 해제하면 db를 바꿀 수 있다. 
+	     이후 startup-unix 폴더로 이동해 .sh파일을 모두 restart한다 (파일명 restart)
