@@ -22,6 +22,10 @@
 	     이 세개 폴더의 conf 폴더 안의 database.properties를 vi로 열고 주석을 해제하면 db를 바꿀 수 있다. 
 	     이후 startup-unix 폴더로 이동해 .sh파일을 모두 restart한다 (파일명 restart)
 
+- 인천대 프로젝트 이관
+	1. 프로젝트 압축 풀고 CMS는 기본적 세팅
+	2. searchApi는 spring boot app으로 실행 하되 pom.xml에서 에러나고 있으면 maven force update 진행하기
+
 - 리눅스 가동 포트 확인법 : sudo lsof -i :\[포트번호]
 - 리눅스 가동 포트 죽이기: sudo kill -9 \[포트번호]
 
