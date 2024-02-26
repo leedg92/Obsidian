@@ -7,6 +7,9 @@ from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager 
 from selenium.common.exceptions import NoSuchElementException
 
+#pip install beautifulsoup4 lxml
+#pip install pandas openpyxl
+
 
 # from openpyxl import Workbook
 
