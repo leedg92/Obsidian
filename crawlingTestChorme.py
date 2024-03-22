@@ -31,7 +31,7 @@ url = 'https://www.pknu.ac.kr/main/163?pageIndex=1&bbsId=2&searchCondition=title
 driver.get(url)
 time.sleep(1)
 
-data_list = []
+time.sleep(60)  
 
 try:
     current_page = 0
