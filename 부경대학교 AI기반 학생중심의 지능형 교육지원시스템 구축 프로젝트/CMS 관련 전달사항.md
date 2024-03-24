@@ -36,3 +36,7 @@
 	    web/main/main.do?mId=1 
 
 
+
+
+### 메뉴별 mId
+
