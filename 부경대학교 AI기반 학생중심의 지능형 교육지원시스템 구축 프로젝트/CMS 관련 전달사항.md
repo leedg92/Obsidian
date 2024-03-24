@@ -47,7 +47,8 @@
 | 전공     | /web/major/list.do?mId=44    |
 | 학생설계전공 | /web/studPlan/list.do?mId=99 |
 |        |                              |
-- 추가 메뉴 조회쿼리
-  select menu_name, menu_link from rbs_menu_info
-where isdelete = '0'
-order by menu_idx;
+-  추가 메뉴 조회쿼리
+		SELECT menu_name, menu_link
+		FROM rbs_menu_info
+		WHERE isdelete = '0'
+		ORDER BY menu_idx;
