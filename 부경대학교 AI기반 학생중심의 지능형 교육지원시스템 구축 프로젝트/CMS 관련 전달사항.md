@@ -31,4 +31,5 @@
  (예: 127.0.0.1:8080/web/main/main.do?mId=1)</sub>
 ##### 1. 백엔드에서 alias를 선언 후 Model에 add
 	- controller의 setCommonPath()를 참고.
-##### 2. 
+##### 2. jsp에 직접 경로 기입
+	- 풀경로를 기입하시면
