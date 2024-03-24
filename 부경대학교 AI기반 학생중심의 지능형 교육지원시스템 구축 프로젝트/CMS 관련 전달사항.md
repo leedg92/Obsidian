@@ -39,4 +39,12 @@
 
 
 ### 메뉴별 기본경로
+| 모듈명         | 기본경로                             |
+|----------------|-------------------------------------|
+| 메인           | /web/main/main.do?mId=1             |
+| 통합검색       | /web/search/total.do?mId=11         |
+| 교수           | /web/prof/list.do?mId=43            |
+| 전공           | /web/major/list.do?mId=44           |
+| 학생설계전공   | /web/studPlan/list.do?mId=99        |
 
+##### - 해당 
