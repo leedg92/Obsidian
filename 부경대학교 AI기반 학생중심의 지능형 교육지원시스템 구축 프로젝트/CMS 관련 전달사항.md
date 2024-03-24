@@ -39,11 +39,15 @@
 
 
 ### 메뉴별 기본경로
-| 모듈명         | 기본경로                             |
-|----------------|-------------------------------------|
-| 메인           | /web/main/main.do?mId=1             |
-| 통합검색       | /web/search/total.do?mId=11         |
-| 교수           | /web/prof/list.do?mId=43            |
-| 전공           | /web/major/list.do?mId=44           |
-| 학생설계전공   | /web/studPlan/list.do?mId=99        |
-- 기본
+| 모듈명    | 기본경로                         |
+| ------ | ---------------------------- |
+| 메인     | /web/main/main.do?mId=1      |
+| 통합검색   | /web/search/total.do?mId=11  |
+| 교수     | /web/prof/list.do?mId=43     |
+| 전공     | /web/major/list.do?mId=44    |
+| 학생설계전공 | /web/studPlan/list.do?mId=99 |
+|        |                              |
+- 추가 메뉴 조회쿼리
+  select menu_name, menu_link from rbs_menu_info
+where isdelete = '0'
+order by menu_idx;
