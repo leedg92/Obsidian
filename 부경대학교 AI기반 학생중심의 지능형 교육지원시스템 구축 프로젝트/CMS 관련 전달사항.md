@@ -26,8 +26,8 @@
 
 
 ### 백엔드 API호출 URL 설정법
- <sub>- 기본적으로 내부 CMS의 모든 모듈은 mId라는 메뉴아이디를 가집니다. 이는 CMS의 webUI상에서 메뉴를 만들때 자동으로 생성되고 할당되며, 
- 해당하는 API의 경로에 추가로 mId를 체크합니다.</sub>
+ <sub>- 기본적으로 내부 CMS의 모든 모듈은 mId라는 메뉴아이디를 가집니다. <br>
+ 이는 CMS의 webUI상에서 메뉴를 만들때 자동으로 생성되고 할당되며, <br>해당하는 API를 호출 시 경로와 mId를 체크합니다.</sub>
 ##### 1. 백엔드에서 alias를 선언 후 Model에 add
 	- controller의 setCommonPath()를 참고.
 	- 
