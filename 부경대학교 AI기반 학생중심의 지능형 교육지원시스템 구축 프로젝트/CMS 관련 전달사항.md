@@ -18,3 +18,4 @@
 		- [모듈명]_SQL_Oracle.xml (예: main)
 	- 사용자화면용 모듈
 		- [모듈명]+[기능].java (예: mainController.java)
+		- [모듈명
