@@ -46,5 +46,4 @@
 | 교수           | /web/prof/list.do?mId=43            |
 | 전공           | /web/major/list.do?mId=44           |
 | 학생설계전공   | /web/studPlan/list.do?mId=99        |
-
-##### - 해당 
+- 기본
