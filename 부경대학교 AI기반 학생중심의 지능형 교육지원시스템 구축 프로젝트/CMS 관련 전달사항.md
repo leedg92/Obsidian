@@ -14,12 +14,12 @@
 
 ##### 1. 사용자화면 / 관리자화면 구분
 	- 관리자화면용 모듈 
-		- [모듈명]+ADM+[기능].java 
+		- java : [모듈명]+ADM+[기능].java 
 			- (예: mainAdmController.java)
-		- [모듈명]_ADM_SQL_Oracle.xml
+		- xml : [모듈명]_ADM_SQL_Oracle.xml
 			- (예: main_ADM_SQL_Oracle.xml)
 	- 사용자화면용 모듈
-		- [모듈명]+[기능].java 
+		- java : [모듈명]+[기능].java 
 			- (예: mainController.java)
-		- [모듈명]_SQL_Oracle.xml
+		- xml : [모듈명]_SQL_Oracle.xml
 			- (예: main_SQL_Oracle.xml)
