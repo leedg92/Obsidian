@@ -26,6 +26,8 @@
 
 
 ### 백엔드 API호출 URL 설정법
+ <sub>- 기본적으로 모든 모듈은 mId라는 메뉴아이디를 가집니다.
+ 해당하는 API의 경로와 M</sub>
 ##### 1. 백엔드에서 alias를 선언 후 Model에 add
 	- controller의 setCommonPath()를 참고.
 	- 
