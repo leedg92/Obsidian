@@ -27,4 +27,6 @@
 
 ### 백엔드 API호출 URL 설정법
 ##### 1. 백엔드에서 alias를 선언 후 Model에 add
-	- controller의 클래스 매서드인 setCommonPath()를 참고하시면 됩니다.
+	- controller의 setCommonPath()를 참고.
+	- 
+##### 2. 
