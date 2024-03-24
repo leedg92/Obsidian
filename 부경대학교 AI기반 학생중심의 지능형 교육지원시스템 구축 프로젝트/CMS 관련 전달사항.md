@@ -48,7 +48,13 @@
 | 학생설계전공 | /web/studPlan/list.do?mId=99 |
 |        |                              |
 -  추가 메뉴 조회쿼리
-		SELECT menu_name, menu_link
-		FROM rbs_menu_info
-		WHERE isdelete = '0'
-		ORDER BY menu_idx;
+	SELECT menu_name, menu_link
+	FROM rbs_menu_info
+	WHERE isdelete = '0'
+	ORDER BY menu_idx;
+
+
+
+개발 중 문의사항이나 궁금한점 있으시면 연락주시기 바랍니다.
+- 이동근 주임 : 010-9932-2231
+ - 곽홍근 주임 : 010-
