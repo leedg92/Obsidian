@@ -40,3 +40,7 @@ a1ed9-827cf
 # git token
 
 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
+
+
+
+`git clone https://leedg92%40naver.com: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@https://github.com/leedg92/Obsidian.git`

@@ -1,0 +1,105 @@
+[개발서버 정보]
+1. DB
+- 사양                : Mariadb 10.6.16
+- IP 		: 220.149.74.132:3306
+- DB_NAME	: kmoudev
+- USENAME	: KMOU_USER
+- PASSWORD	: saltlux!23
+
+- root 계정비밀번호 : root
+
+
+2. OS / JDK / TOMCAT / APACHE SERVER
+2.1 OS
+- 사양                : Ubuntu 22.04.4
+- IP                   : 220.149.74.132(외부), 192.168.0.200(내부)
+- ID                   : saltlux
+- PW                  : saltlux!23
+
+
+2.2 JDK
+- 사양                : jdk-8u322-ojdkbuild-linux-x64
+- JAVA_HOME      : /usr/lib/jvm/java-8-openjdk-amd64
+
+2.3 TOMCAT (서비스파일로 OS구동시 자동시작하도록 설정 됨)
+- 사양                : tomcat 8.5.53
+- 설치경로           : /opt/tomcat
+- 서비스파일 경로 : /etc/systemd/system/tomcat.service
+- 구동방법
+=============================================
+saltlux 계정으로 ssh 접속
+# root로 변경 또는 sudo systemctl~로 실행
+$ sudo su
+# 시작
+$ systemctl start tomcat
+# 중지
+$ systemctl stop tomcat
+# 상태확인
+$ systemctl status tomcat
+=============================================
+- server.xml Context 설정(로컬/개발) : /opt/tomcat/conf/server.xml 
+<Context docBase="Source" path="/" reloadable="true" source="org.eclipse.jst.jee.server:Source">
+      	<Resource
+                auth="Container"
+                type="javax.sql.DataSource"
+                driverClassName="com.mysql.jdbc.Driver"
+                name="jdbc/RBISDB"
+                url="jdbc:mysql://192.168.0.200:3306/kmoudev?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=utf8"
+                username="KMOU_USER"
+                password="saltlux!23"
+                logAbandoned="true"
+                maxIdle="10"
+                maxTotal="100"
+                maxWaitMillis="10000"
+                minEvictableIdleTimeMillis="60000"
+                removeAbandonedOnMaintenance="true"
+                removeAbandonedTimeout="300"
+                testOnBorrow="true"
+                testWhileIdle="true"
+                timeBetweenEvictionRunsMillis="10000"
+                validationQuery="SELECT 1"/>
+        </Context>
+
+
+
+2.4 APACHE SERVER
+- 사양                :  Apache/2.4.52
+- 설치경로           : /etc/apache2
+- virtualhost 설정파일 경로                                : /etc/apache2/sites-available/001-rbis4.conf
+- apache tomcat 연동(modjk)관련 설정파일 경로      : /etc/apache2/mods-available/jk.conf, /etc/libapache2-mod-jk/workers.properties
+- 구동방법
+=============================================
+saltlux 계정으로 ssh 접속
+# root로 변경 또는 sudo systemctl~로 실행
+$ sudo su
+# 시작
+$ systemctl start apache2
+# 중지
+$ systemctl stop apache2
+# 상태확인
+$ systemctl status apache2
+=============================================
+
+
+
+
+3 프로그램 정보
+3.1 웹 프로그램
+- 프로그램 경로          : /home/WEB/kmou
+- 로그 경로               : /home/WEB/kmou_log
+
+
+4. 통합관리시스템 계정
+4.1 일반사용자사이트
+- URL                : 220.149.74.132:8090/web
+- ID                  : 
+- PW                 : 
+
+4.2 관리사이트
+- URL                : 220.149.74.132:8090/RBISADM(변경가능)
+- ID                  : admin
+- PW                 : admin
+
+
+5. SVN 정보
+svn://192.168.0.200/kmou
