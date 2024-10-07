@@ -47,7 +47,7 @@ sudo systemctl enable docker
 sudo usermod -aG docker $USER
 ```
 
-### 3.2 Java 설치 (톰캣 사용)
+### 3.2 Java 설치
 ```bash
 sudo apt install openjdk-11-jdk -y
 ```
@@ -87,12 +87,13 @@ COPY . .
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
 ```
 
-### 5.2 Java 기반 컨테이너 (톰캣 서버)
+### 5.2 Java 기반 컨테이너 (Spring Boot 내장 서버 사용)
 ```dockerfile
-FROM tomcat:9.0
-COPY target/myapp.war /usr/local/tomcat/webapps/
-COPY build /usr/local/tomcat/webapps/ROOT/
-CMD ["catalina.sh", "run"]
+FROM openjdk:11-jre-slim
+
+WORKDIR /app
+COPY target/myapp.jar /app/myapp.jar
+CMD ["java", "-jar", "myapp.jar"]
 ```
 
 ## 6. CI/CD 설정 (GitHub Actions or Jenkins)
