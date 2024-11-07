@@ -58,9 +58,9 @@
    - server.xml 하단부의 Context 태그를 README.md \*별첨의 Context로 변경
 
 10. globals.properties 설정
-   - gloabls.properties 파일 열기 
-   - C:/Users/sli004/git/pknu-project/Source/ 검색 -> 로컬PC의 Source 위치의 경로로 수정
-   - Globals.server.license.key 검색 -> 할당받은 로컬PC용 라이센스키로 변경
+   - `globals.properties_dev` 파일 복사 ->  `globals.properties`로 동일 경로에 붙여넣기
+   - `/home/aipknu/apache-tomcat-8.5.98/webapps/Source/` 검색 -> 로컬PC의 Source(git clone 한) 위치의 경로로 수정
+   - `Globals.server.license.key` 검색 -> 할당받은 로컬PC용 라이센스키로 변경
    - 저장
 
 11. 테스트
