@@ -14,12 +14,8 @@
 
 3.  GitLab 계정 활성화
    - http://192.168.110.121:40080 접속
-   - 하단의 초기 ID / PW 입력 -> 패스워드 변경
-   - 목록 : 
-     - 곽홍근 : hg_kwak / 1qw2#ER$
-     - 이동근 : dg_lee / 1qw2#ER$
-     - 웨일비 : whalebe / 1qw2#ER$
-     - 퍼블리셔 : publisher / 1qw2#ER$
+   - \*별첨에서 본인에 해당하는 초기 ID / PW 입력 -> 패스워드 변경
+   
 
 4. Git Repositories 뷰에서 'Clone a Git repository' 클릭
    - URI: http://192.168.110.121/pknu-project-group/pknu-project.git
@@ -59,7 +55,7 @@
 
 9. DB Connection Setting
    - server.xml 파일 열기
-   - server.xml 하단부의 Context 태그를 README.md 하단의 Context로 변경
+   - server.xml 하단부의 Context 태그를 README.md \*별첨의 Context로 변경
 
 10. globals.properties 설정
    - gloabls.properties 파일 열기 
@@ -115,6 +111,7 @@
    - 프로젝트 우클릭 -> Team -> Push to Upstream
    - main 브랜치로 푸시되면 자동 배포 시작
 
+***
 ## 3. 주요 작업 가이드
 
 ### 코드 업데이트
@@ -137,9 +134,9 @@
 ### 커밋 메시지 규칙 
 - 형식: 
 ```
-  \[YYYYMMDDHH\] - \[이름\]
+  \[YYYYMMDD\] - \[이름\]
   (둘째 줄 공백)
-  [유형] 종류 - 내용 (같은 종류이지만 다른 내용이면 /(슬래쉬)를 기준으로 작성) ...뭐 아니면 알아보기 쉽게만 구분해주시면 됩니다.
+  [유형] 종류 - 내용 (같은 종류이더라도 다른 내용이면 다음 줄에 추가)
 ```
 - 유형:
   * ADD: 새로운 기능 추가
@@ -155,9 +152,11 @@
   2. [MOD] 메인 - 로그인 기능 SSO 방식으로 수정
   3. [FIX] 비교과검색 - 검색결과 화면 페이징 버그 수정
   4. [DOC] 설정 - globals.properties의 학생설계전공 알림 메세지 변경
-  5. [CLEAN] 전공검색 - 검색기능 코드 리펙토링 / 불필요한 주석 및 console출력 제거
+  5. [CLEAN] 전공검색 - 검색기능 코드 리펙토링
+  6. [CLEAN] 전공검색 - 불필요한 주석 및 console출력 제거
 ```
 
+***
 ## 4. 배포 프로세스
 
 ### 자동 배포
@@ -193,4 +192,29 @@
 
 ***
 
+## 별첨
 
+
+### - 계정목록
+
+|  이름  |    ID     |    PW    |
+| :--: | :-------: | :------: |
+| 곽홍근  |  hg_kwak  | 1qw2#ER$ |
+| 이동근  |  dg_lee   | 1qw2#ER$ |
+| 웨일비  |  whalebe  | 1qw2#ER$ |
+| 퍼블리셔 | publisher | 1qw2#ER$ |
+
+### - Context 태그 변경
+
+```
+				<Context docBase="Source" path="/" reloadable="false" source="org.eclipse.jst.jee.server:Source">
+					<!-- DEV -->
+					<!-- searchadmin -->
+					<Resource auth="Container" driverClassName="com.mysql.cj.jdbc.Driver" logAbandoned="true" maxIdle="10" maxTotal="100" maxWaitMillis="10000" minEvictableIdleTimeMillis="60000" name="jdbc/SEARCHDB" password="aisearch" removeAbandonedOnMaintenance="true" removeAbandonedTimeout="300" testOnBorrow="true" testWhileIdle="true" timeBetweenEvictionRunsMillis="10000" type="javax.sql.DataSource" url="jdbc:mysql://192.168.110.121:3306/searchadmin?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=utf8" username="aisearch" validationQuery="SELECT 1"/>
+					<!-- 부경대학교 학사 DB -->
+					<Resource auth="Container" driverClassName="oracle.jdbc.driver.OracleDriver" factory="oracle.jdbc.pool.OracleDataSourceFactory" logAbandoned="true" maxActive="100" maxIdle="10" maxWait="10000" minEvictableIdleTimeMillis="60000" name="jdbc/PKNUDB" password="devs1234" removeAbandoned="true" removeAbandonedTimeout="300" timeBetweenEvictionRunsMillis="10000" type="oracle.jdbc.pool.OracleDataSource" url="jdbc:oracle:thin:@203.250.124.177:1521/dev01" user="uni"/>					
+					<!-- 부경대학교 ai기반 학사지원 시스템 DB(가칭) -->
+					<Resource auth="Container" driverClassName="oracle.jdbc.driver.OracleDriver" factory="oracle.jdbc.pool.OracleDataSourceFactory" logAbandoned="true" maxActive="100" maxIdle="10" maxWait="10000" minEvictableIdleTimeMillis="60000" name="jdbc/RBISDB" password="aiedu24!" removeAbandoned="true" removeAbandonedTimeout="300" timeBetweenEvictionRunsMillis="10000" type="oracle.jdbc.pool.OracleDataSource" url="jdbc:oracle:thin:@203.250.124.177:1521/dev01" user="aiedu"/>
+				</Context>  
+			
+```
