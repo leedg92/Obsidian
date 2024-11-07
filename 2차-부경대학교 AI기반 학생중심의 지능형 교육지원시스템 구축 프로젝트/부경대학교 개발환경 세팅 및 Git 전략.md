@@ -1,4 +1,5 @@
 
+***
 ## 1. 초기 설정
 
 ### 이클립스에서 Git 프로젝트 가져오기
@@ -11,7 +12,16 @@
 2. 이클립스 Git Repositories 뷰 열기
    - Window -> Show View -> Other -> Git -> Git Repositories
 
-3. Git Repositories 뷰에서 'Clone a Git repository' 클릭
+3.  GitLab 계정 활성화
+   - http://192.168.110.121:40080 접속
+   - 하단의 초기 ID / PW 입력 -> 패스워드 변경
+   - 목록 : 
+     - 곽홍근 : hg_kwak / 1qw2#ER$
+     - 이동근 : dg_lee / 1qw2#ER$
+     - 웨일비 : whalebe / 1qw2#ER$
+     - 퍼블리셔 : publisher / 1qw2#ER$
+
+4. Git Repositories 뷰에서 'Clone a Git repository' 클릭
    - URI: http://192.168.110.121/pknu-project-group/pknu-project.git
    - Port: 40080
    - Authentication
@@ -21,25 +31,25 @@
    - Import all existing Eclispse projects after clone finishes 체크
    - Finish
 
-4. 프로젝트 Import
+5. 프로젝트 Import
    - Git Repositories 뷰에서 Working Directory 우클릭
    - Import Projects 선택
    - Import as general project -> Next -> Finish
 
-5. Java Version Setting
+6. Java Version Setting
    - 프로젝트(Source) 우클릭 -> Build Path -> Libraris탭
    - JRE Stsrem Library 선택 -> 우측 Edit 버튼 클릭
    - Alternate JRE 체크 -> Installed JREs... 클릭
    - Add.. 클릭 -> 설치된 Java(Jdk1.8) 폴더 선택
    - Apply -> Apply and Close -> Finish
 
-6. Maven Setting
-   - 전달 받은 Maven설정파일 압축 해제 후 settings.xml의 경로 수정(동일 경로의 repository) 
+7. Maven Setting
+   - PKNU_MAVEN 폴더 settings.xml의 경로 수정(동일 경로의 repository) 
    - 이클립스 Window -> Preference -> Maven 검색 -> User Settings 선택
    - Global Settings, User Settings를 수정한 settings.xml로 변경
    - Apply -> Applt and Close
 
-7. Apache Tomcat Setting
+8. Apache Tomcat Setting
    - 이클립스 하단의 Servers 탭 클릭
    - No servers are available. Click 뭐시기 클릭
    - Apache -> Tomcat v8.5 Server 선택 -> Next -> Browse
@@ -47,17 +57,17 @@
    - JRE : jdk1.8 선택(Build Path설정에서 추가한 자바 버전) -> Next
    - Source(rbis4-4.0.0) 선택 -> Add -> Finish
 
-8. DB Connection Setting
+9. DB Connection Setting
    - server.xml 파일 열기
-   - 파일 하단부의 Context 태그를 전달받은 내용으로 변경
+   - server.xml 하단부의 Context 태그를 README.md 하단의 Context로 변경
 
-8. globals.properties 설정
+10. globals.properties 설정
    - gloabls.properties 파일 열기 
    - C:/Users/sli004/git/pknu-project/Source/ 검색 -> 로컬PC의 Source 위치의 경로로 수정
    - Globals.server.license.key 검색 -> 할당받은 로컬PC용 라이센스키로 변경
    - 저장
 
-9. 테스트
+11. 테스트
    - 서버 기동(Tomcat)
    - 서버 실행 후 http://127.0.0.1:8080/web 접속(or localhost)
      - 포트는 자유롭게 변경하셔도 됩니다.
@@ -67,12 +77,12 @@
    - ID : egovadmin3 / PW : test1234! 로그인 시도
    - 로그인 되면 DB도 접속 성공
    
-
 ### Git 사용자 정보 설정(선택)
 - 이클립스 우측 상단 Git Perspective에서 우클릭 -> Configure
 - user.name "이름"
 - user.email "이메일"
 
+***
 ## 2. 브랜치 전략
 
 ### 브랜치 구조
@@ -148,8 +158,6 @@
   5. [CLEAN] 전공검색 - 검색기능 코드 리펙토링 / 불필요한 주석 및 console출력 제거
 ```
 
-
-
 ## 4. 배포 프로세스
 
 ### 자동 배포
@@ -166,7 +174,7 @@
   * 루트 디렉토리: jsp, xml, properties 등 리소스 파일
     
 ### 서버 재기동(변경 가능성 있음)
-- 개발서버 재기동 경로: 
+- 개발서버 재기동 경로:  sudo systemctl tomcat restart
 ## 5. 주의사항
 
 ### 브랜치 관리
@@ -181,3 +189,8 @@
 - main 브랜치 푸시 시 자동 배포됨
 - 소스 대변경 시 충분한 테스트 후 배포
 - 병합 후 소스코드(일부만이라도)가 최신본으로 올라가있는지 확인(저도 제가 구축한 파이프라인을 못 믿겠습니다..)
+
+
+***
+
+
