@@ -17,18 +17,24 @@ CREATE TABLE config_ecos_common (
     update_dtm DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
--- 수집될 데이터에 대한 config.ini의 복잡한 하드코딩 설정을 DB화
-CREATE TABLE config_ecos_codes (
-    code_id INT AUTO_INCREMENT PRIMARY KEY,
-    category VARCHAR(50) NOT NULL,
-    period CHAR(1) NOT NULL,
-    table_code VARCHAR(20) NOT NULL,
-    item_code_list TEXT NOT NULL,
-    use_yn CHAR(1) DEFAULT 'Y',
-    description VARCHAR(200),
-    created_dtm DATETIME DEFAULT CURRENT_TIMESTAMP,
-    update_dtm DATETIME DEFAULT CURRENT_TIMESTAMP,
-    INDEX idx_category_period (category, period)
+-- 마스터 코드 테이블 생성
+CREATE TABLE FCT_MASTER_CODE (
+    COLLECT_PLACE VARCHAR(20) NOT NULL COMMENT '수집처 정보',
+    DEPTH1 VARCHAR(50) default ''  COMMENT 'DEPTH1',
+    DEPTH2 VARCHAR(50) default ''  COMMENT 'DEPTH2',
+    DEPTH3 VARCHAR(50) default ''  COMMENT 'DEPTH3',
+    DEPTH4 VARCHAR(50) default ''  COMMENT 'DEPTH4',
+    DEPTH5 VARCHAR(50) default '' COMMENT 'DEPTH5',
+    DEPTH6 VARCHAR(50) default ''  COMMENT 'DEPTH6',
+    COLLECT_RANGE CHAR(1) DEFAULT '' COMMENT '수집 주기(M/Q/Y)',
+    USE_YN CHAR(1) DEFAULT 'Y' COMMENT '사용 여부 (Y/N)',
+    TABLE_NAME VARCHAR(100) COMMENT '적재 테이블명',
+    COLUMNS_INFO TEXT COMMENT '적재 테이블 컬럼 정보',
+    LAST_MODI_DATE DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '최종 수정 일시',
+    PRIMARY KEY (COLLECT_PLACE, DEPTH1, DEPTH2, DEPTH3, DEPTH4, DEPTH5, DEPTH6, COLLECT_RANGE)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='KMI 수집 데이터 마스터 코드 관리 테이블';
+
+
 );
 ```
 
@@ -88,3 +94,21 @@ def check_latest_data(new_df, table_name):
     """최신 데이터 비교 후 업데이트 필요 여부 반환"""
 ```
 
+### 2. 카테고리 관리 테이블
+- 기존: 각 수집처 및 하위 카테고리가 config파일에서 관리
+- 변경: 마스터코드테이블로 관리
+
+```
+table : 마스터 코드 (FCT_MASTER_CODE)
+컬럼 : 13개
+ - 수집처         : COLLECT_PLACE
+ - depth1~6       : DEPTH1~6
+ - 월간(flag)     : IS_MONTHLY_COLLECT
+ - 분기(flag)     : IS_QUATERLY_COLLECT
+ - 연간(flag)     : IS_YEARLY_COLLECT
+ - 사용여부(flag) : USE_YN
+ - table명        : TABLE_NAME 
+ - column정보     : COLUMNS_INFO
+
+
+```
