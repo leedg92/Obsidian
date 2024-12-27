@@ -2,25 +2,85 @@
 
 # 1. 성인용 직업적성검사 (adultJobAptExam)
 
-| 항목        | 타입     | 설명              |
-| --------- | ------ | --------------- |
-| total     | -      | 조회건수            |
-| psyExamCd | String | 심리검사코드          |
-| psyExamNo | String | 심리검사번호          |
-| examDt    | String | 검사일자 (YYYYMMDD) |
-| score1    | String | 언어력 점수          |
-| score2    | String | 수리력 점수          |
-| score3    | String | 추리력 점수          |
-| score4    | String | 공간지각력 점수        |
-| score5    | String | 사물지각력 점수        |
-| score6    | String | 상황판단력 점수        |
-| score7    | String | 기계능력 점수         |
-| score8    | String | 집중력 점수          |
-| score9    | String | 색채지각력 점수        |
-| score10   | String | 사고유창력 점수        |
-| score11   | String | 협응능력 점수         |
-| jobInfo1  | String | 최적합 직업군         |
-| jobInfo2  | String | 적합 직업군          |
+
+| 항목                  | 타입     | 설명                |
+| ------------------- | ------ | ----------------- |
+| total               | -      | 조회건수              |
+| psyExamCd           | String | 심리검사코드            |
+| psyExamNo           | String | 심리검사번호            |
+| examDt              | String | 검사일자 (YYYYMMDD)   |
+| vocaOsco            | String | 어휘력 원점수           |
+| clrmixOsco          | String | 색혼합 원점수           |
+| numprginf1Osco      | String | 수열추리1 원점수         |
+| thngsprcpOsco       | String | 사물지각 원점수          |
+| calclOsco           | String | 계산능력 원점수          |
+| asbpieceOsco        | String | 조각맞추기 원점수         |
+| datacomOsco         | String | 자료해석력 원점수         |
+| asbpitureOsco       | String | 그림맞추기 원점수         |
+| readcOsco           | String | 문장독해력 원점수         |
+| cncntOsco           | String | 집중력 원점수           |
+| numprginf2Osco      | String | 수열추리2 원점수         |
+| clrgbnOsco          | String | 색구분 원점수           |
+| prbsolablOsco       | String | 문제해결능력 원점수        |
+| figinfOsco          | String | 도형추리력 원점수         |
+| situjdgablOsco      | String | 상황판단능력 원점수        |
+| mechanablOsco       | String | 기계능력 원점수          |
+| thinkflntOsco       | String | 사고유창력 원점수         |
+| vocaSsco            | String | 어휘력 표준점수          |
+| clrmixSsco          | String | 색혼합 표준점수          |
+| numprginf1Ssco      | String | 수열추리1 표준점수        |
+| thngsprcpSsco       | String | 사물지각 표준점수         |
+| calclSsco           | String | 계산능력 표준점수         |
+| asbpieceSsco        | String | 조각맞추기 표준점수        |
+| datacomSsco         | String | 자료해석력 표준점수        |
+| asbpitureSsco       | String | 그림맞추기 표준점수        |
+| readcSsco           | String | 문장독해력 표준점수        |
+| cncntSsco           | String | 집중력 표준점수          |
+| numprginf2Ssco      | String | 수열추리2 표준점수        |
+| clrgbnSsco          | String | 색구분 표준점수          |
+| prbsolablSsco       | String | 문제해결능력 표준점수       |
+| figinfSsco          | String | 도형추리력 표준점수        |
+| situjdgablSsco      | String | 상황판단능력 표준점수       |
+| mechanablSsco       | String | 기계능력 표준점수         |
+| thinkflntSsco       | String | 사고유창력 표준점수        |
+| topLangablOsco      | String | 적성요인 언어력 원점수      |
+| topMathablOsco      | String | 적성요인 수리력 원점수      |
+| topPrginfablOsco    | String | 적성요인 추리력 원점수      |
+| topSpatprcpablOsco  | String | 적성요인 공간지각력 원점수    |
+| topThngsprcpablOsco | String | 적성요인 사물지각력 원점수    |
+| topSitujdgablOsco   | String | 적성요인 상황판단력 원점수    |
+| topMechanablOsco    | String | 적성요인 기계능력 원점수     |
+| topCncntablOsco     | String | 적성요인 집중력 원점수      |
+| topClrprcpablOsco   | String | 적성요인 색채지각력 원점수    |
+| topPrbsolablOsco    | String | 적성요인 문제해결능력 원점수   |
+| topThinkflntablOsco | String | 적성요인 사고유창력 원점수    |
+| topLangablSsco      | String | 적성요인 언어력 표준점수     |
+| topMathablSsco      | String | 적성요인 수리력 표준점수     |
+| topPrginfablSsco    | String | 적성요인 추리력 표준점수     |
+| topSpatprcpablSsco  | String | 적성요인 공간지각력 표준점수   |
+| topThngsprcpablSsco | String | 적성요인 사물지각력 표준점수   |
+| topSitujdgablSsco   | String | 적성요인 상황판단력 표준점수   |
+| topMechanablSsco    | String | 적성요인 기계능력 표준점수    |
+| topCncntablSsco     | String | 적성요인 집중력 표준점수     |
+| topClrprcpablSsco   | String | 적성요인 색채지각력 표준점수   |
+| topPrbsolablSsco    | String | 적성요인 문제해결능력 표준점수  |
+| topThinkflntablSsco | String | 적성요인 사고유창력 표준점수   |
+| topLangablPsco      | String | 적성요인 언어력 백분위점수    |
+| topMathablPsco      | String | 적성요인 수리력 백분위점수    |
+| topPrginfablPsco    | String | 적성요인 추리력 백분위점수    |
+| topSpatprcpablPsco  | String | 적성요인 공간지각력 백분위점수  |
+| topThngsprcpablPsco | String | 적성요인 사물지각력 백분위점수  |
+| topSitujdgablPsco   | String | 적성요인 상황판단력 백분위점수  |
+| topMechanablPsco    | String | 적성요인 기계능력 백분위점수   |
+| topCncntablPsco     | String | 적성요인 집중력 백분위점수    |
+| topClrprcpablPsco   | String | 적성요인 색채지각력 백분위점수  |
+| topPrbsolablPsco    | String | 적성요인 문제해결능력 백분위점수 |
+| topThinkflntablPsco | String | 적성요인 사고유창력 백분위점수  |
+| rcmndJob1           | String | 1순위 추천직업          |
+| rcmndJob2           | String | 2순위 추천직업          |
+| rcmndJob3           | String | 3순위 추천직업          |
+| rcmndJob4           | String | 4순위 추천직업          |
+| rcmndJob5           | String | 5순위 추천직업          |
 
 # 2. 직업선호도검사 S형 (jobPrefExamS)
 
