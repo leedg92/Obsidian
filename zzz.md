@@ -1,6 +1,9 @@
 # 산타의 혁신과 함께 함께하고픈 백엔드 개발자입니다
 
-Java 전자정부 프레임워크, spring boot와 Python을 활용한 백엔드 개발, Vector Embedding 기반 의미 매칭 시스템, Jenkins/Docker/GitLab을 통한 DevOps 환경 구축에 강점이 있습니다. Elasticsearch 기반 검색 시스템과 Airflow 데이터 파이프라인 구축 경험은 산타의 서비스 고도화에 즉시 기여할 수 있는 역량입니다.
+Java기반 웹 개발자이며 전자정부 프레임워크, spring boot 위에서 주로 백엔드 개발을 진행해왔습니다.
+추가로 Python을 활용한 백엔드 개발, Vector Embedding 기반 의미 매칭 시스템, Jenkins/Docker/GitLab을 통한 DevOps 환경 구축 경험도 있습니다.
+
+또한 Elasticsearch 기반 검색 시스템과 Airflow 데이터 파이프라인 구축 경험은 산타의 서비스 고도화에 즉시 기여할 수 있는 역량이라 생각합니다.
 
 ## 일하는 방식: 자기 객관화와 협업
 
