@@ -1,8 +1,6 @@
 # 산타의 혁신과 함께 함께하고픈 백엔드 개발자입니다
 
-## 기술적 역량
-
-저는 대학교 교과목 AI 추천 시스템 개발을 통해 학생들에게 맞춤형 학습 경험을 제공해 왔습니다. Java 전자정부 프레임워크와 Python을 활용한 백엔드 개발, Vector Embedding 기반 의미 매칭 시스템, Jenkins/Docker/GitLab을 통한 DevOps 환경 구축에 강점이 있습니다. Elasticsearch 기반 검색 시스템과 Airflow 데이터 파이프라인 구축 경험은 산타의 서비스 고도화에 즉시 기여할 수 있는 역량입니다.
+Java 전자정부 프레임워크, spring boot와 Python을 활용한 백엔드 개발, Vector Embedding 기반 의미 매칭 시스템, Jenkins/Docker/GitLab을 통한 DevOps 환경 구축에 강점이 있습니다. Elasticsearch 기반 검색 시스템과 Airflow 데이터 파이프라인 구축 경험은 산타의 서비스 고도화에 즉시 기여할 수 있는 역량입니다.
 
 ## 일하는 방식: 자기 객관화와 협업
 
