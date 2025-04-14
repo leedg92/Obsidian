@@ -11,3 +11,7 @@ mkdir -p src/app/community/posts/[id]
 mkdir -p src/app/auth/login
 mkdir -p src/app/auth/register
 mkdir -p src/app/profile
+
+
+
+npm install axios swr react-hook-form zod @hookform/resolvers react-icons date-fns clsx tailwind-merge @headlessui/react jwt-decode
