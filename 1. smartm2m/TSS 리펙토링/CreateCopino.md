@@ -4,4 +4,4 @@
 
 3. TssCreateCopinoService.java
 
-4. TssCreateCopinoMapper.xm
+4. TssCreateCopinoMapper.xml
