@@ -14,13 +14,3 @@
 
 
 
-"EnterBlock"
-"JobDone"
-"CancelInOut"
-"EmptyConInspectionResult"
-"EmptyConCleaningResult"
-"EmptyConSwapResult"
-"ChangeConLoc"
-"ReeferPlugInOutResult"
-"OnEmptyConCPSArrival"
-"OnCPSAutomationStart"
