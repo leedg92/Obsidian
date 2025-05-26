@@ -11,15 +11,3 @@
 10. "ReeferPlugInOutResult"
 11. "OnEmptyConCPSArrival"
 12. "OnCPSAutomationStart"
-
-
-"EnterBlock"
-"JobDone"
-"CancelInOut"
-"EmptyConInspectionResult"
-"EmptyConCleaningResult"
-"EmptyConSwapResult"
-"ChangeConLoc"
-"ReeferPlugInOutResult"
-"OnEmptyConCPSArrival"
-"OnCPSAutomationStart"
