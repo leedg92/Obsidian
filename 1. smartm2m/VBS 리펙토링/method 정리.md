@@ -14,3 +14,4 @@
 
 
 
+BChainParam{info={in_terminal_code=BNCTC050, trucker_code=KOOKC052, out_terminal_code=BCTHD010, ship_code=SKR}, data={docKey=SKR_TESTHMDUH0900001_TEST0000107}}
