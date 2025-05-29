@@ -13,4 +13,7 @@ git log -10 bctrans-prod/containus/develop
 
 *** 한줄로 보기
 git log --oneline bctrans-prod/containus/develop
+
+*** 한줄로 10개 보기
+git log --oneline -10 bctrans-prod/containus/develop
 ```
