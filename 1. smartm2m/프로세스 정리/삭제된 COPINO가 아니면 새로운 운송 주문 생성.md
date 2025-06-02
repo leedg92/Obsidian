@@ -1,6 +1,5 @@
 
-## createNewCopinoData
-### 1. containerTransportMapper.saveNewContainerTransport(containerTransport)
+## 1. containerTransportMapper.saveNewContainerTransport(containerTransport)
 - 테이블: bctransdbx.container_transport (컨테이너 운송)
 - 설명: 컨테이너 운송 기본 정보 저장
 
