@@ -5,15 +5,12 @@
 - 설명: 컨테이너 운송 기본 정보 저장
 ---
 ### 2. containerTransportVbsMapper.saveNewContainerTransportVbs(containerTransportVbs)
-- 테이블: bctransdbx.container_transport_vbs
+- 테이블: bctransdbx.container_transport_vbs (vbs 운송 예약관련(?))
 - 설명: VBS(예약) 관련 정보 저장
 
 ---
-
 ### 3. containerTransportSummaryMapper.saveContainerTransportSummary(containerTransportSummary)
-
-- 테이블: bctransdbx.container_transport_summary
-
+- 테이블: bctransdbx.container_transport_summary (컨테이너 운송건 요약 정보)
 - 설명: 운송 요약 정보 저장 (게이트 인/아웃, 작업 완료 등)
 
 ---
