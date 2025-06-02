@@ -10,7 +10,6 @@
 - 설명: 운송 요약 정보 갱신 (게이트 인/아웃, 작업 완료 등)
 
 ---
-
 ### 3.containerRfPowerStatusMapper.saveNewContainerRfPowerStatus
 
 - 테이블: bctransdbx.container_rf_power_status (냉동컨테이너 전원 변경 상태)
