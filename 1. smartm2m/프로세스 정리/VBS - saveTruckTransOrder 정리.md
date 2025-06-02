@@ -1,81 +1,49 @@
+# saveTruckTransOrder 프로세스 플로우
 
-# saveTruckTransOrder 함수 플로우차트
-
-  
-
-  
-```
+```mermaid
 graph TD
-    START[📋 saveTruckTransOrder 시작] --> EXTRACT[🔍 오류 상태 추출<br/>ContainerTransportErrorStatus]
-    EXTRACT --> INIT[⚙️ 변수 초기화<br/>isNeedFcmSend = true<br/>pinNo, terminalCode, documentKey]
-    INIT --> GET_EXISTED[📊 기존 COPINO 데이터 조회<br/>existedCopinoData]
-    GET_EXISTED --> BLOCKCHAIN[🔗 블록체인 COPINO 조회<br/>blockChainRequestGetCopino]
+    START[📋 트럭 운송 주문 저장 요청] --> VALIDATE[🔍 블록체인에서 COPINO 정보 조회 및 검증]
     
-    BLOCKCHAIN --> VALID_RESULT{✅ 블록체인 결과<br/>유효성 체크<br/>isAvaliableResult?}
-    VALID_RESULT -->|❌ No| FAIL1[❌ 로그 출력<br/>return false]
+    VALIDATE --> VALID_CHECK{✅ 유효한 데이터?}
+    VALID_CHECK -->|❌ No| FAIL[❌ 처리 실패]
     
-    VALID_RESULT -->|✅ Yes| VALID_COPINO{✅ COPINO 데이터<br/>유효성 체크<br/>isAvaliableCopinoData?}
-    VALID_COPINO -->|❌ No| FAIL1
+    VALID_CHECK -->|✅ Yes| NEED_SAVE{💾 저장이 필요한 데이터?}
+    NEED_SAVE -->|❌ No| SKIP[⏸️ 저장 생략]
     
-    VALID_COPINO -->|✅ Yes| EXTRACT_DATA[📋 데이터 추출<br/>copino, appointment, info]
-    EXTRACT_DATA --> NEED_SAVE{💾 COPINO 저장 필요?<br/>isNeedSaveCopino}
-    NEED_SAVE -->|❌ No| FAIL2[❌ return false]
+    NEED_SAVE -->|✅ Yes| EXIST_CHECK{🔍 기존 운송 주문 존재?}
     
-    NEED_SAVE -->|✅ Yes| EXTRACT_STATUS[📝 상태 및 트럭번호 추출<br/>newCopinoDocStatus<br/>truckNo]
-    EXTRACT_STATUS --> EXIST_CHECK{🔍 기존 COPINO<br/>데이터 존재?}
+    %% 기존 주문이 있는 경우
+    EXIST_CHECK -->|✅ 있음| STATUS_CHECK{📊 현재 상태는?}
     
-    %% 기존 데이터가 있는 경우
-    EXIST_CHECK -->|✅ 있음| CHECK_STATUS[📊 기존 상태 체크<br/>isExistedOrderGateIn<br/>isExistedOrderError<br/>isCopinoLogicError]
-    CHECK_STATUS --> CALC_TIME[⏰ 삭제 가능 시간 계산<br/>canUpdateRemoveCopinoTime]
-    CALC_TIME --> GET_TRANSPORT[🚛 기존 운송 데이터 조회<br/>existedContainerTransport]
+    STATUS_CHECK -->|🚪 GATE OUT/CANCEL| UPDATE_FINAL[🔄 최종 상태 업데이트]
     
-    GET_TRANSPORT --> GATE_CHECK{🚪 GATE OUT 또는<br/>CANCEL INOUT?}
-    GATE_CHECK -->|✅ Yes| UPDATE1[🔄 운송 데이터 업데이트<br/>updateContainerTransport]
-    UPDATE1 --> FCM_CHECK1[📱 FCM 전송 필요성 체크<br/>isNeedFcmSend = !equals]
-    FCM_CHECK1 --> POPUP1[🔔 팝업 데이터 처리<br/>saveNewAllconeShowPopup]
+    STATUS_CHECK -->|🚛 운송 중| CONDITION_CHECK{🔍 업데이트 조건 확인}
+    CONDITION_CHECK -->|❌ 조건 불만족| NO_UPDATE[⏸️ 업데이트 하지 않음]
+    CONDITION_CHECK -->|✅ 조건 만족| SPECIAL_CHECK{🏢 특수 처리 대상?}
     
-    GATE_CHECK -->|❌ No| LOGIC_CHECK{🔍 Gate In & Logic Error &<br/>기존오류 아님?}
-    LOGIC_CHECK -->|✅ Yes| NO_PROCESS[⏸️ 아무 처리 안함]
+    SPECIAL_CHECK -->|✅ DGT신항 EMPTY OUT| SPECIAL_UPDATE[🔄 특수 업데이트]
+    SPECIAL_CHECK -->|❌ 일반| NORMAL_UPDATE[🔄 일반 업데이트]
     
-    LOGIC_CHECK -->|❌ No| DELETE_CHECK{🗑️ COPINO 삭제 상태 &<br/>삭제 불가능?}
-    DELETE_CHECK -->|✅ Yes| FAIL3[❌ return false]
+    %% 새로운 주문인 경우
+    EXIST_CHECK -->|❌ 없음| DELETE_CHECK{🗑️ 삭제된 COPINO?}
+    DELETE_CHECK -->|✅ Yes| NO_CREATE[⏸️ 생성하지 않음]
+    DELETE_CHECK -->|❌ No| CREATE[✨ 새로운 운송 주문 생성]
     
-    DELETE_CHECK -->|❌ No| CHECK_GENERAL1[🔍 일반 컨테이너/트럭 정보 체크<br/>checkGeneralContainerAndTrucker]
-    CHECK_GENERAL1 --> DGT_CHECK{🏢 DGT신항 EMPTY OUT<br/>특수 조건?}
+    %% 후처리
+    UPDATE_FINAL --> POST_PROCESS[📱 알림 및 팝업 처리]
+    SPECIAL_UPDATE --> POST_PROCESS
+    NORMAL_UPDATE --> POST_PROCESS
+    CREATE --> POST_PROCESS
     
-    DGT_CHECK -->|✅ Yes| DGT_UPDATE[🔄 DGT EMPTY OUT 업데이트<br/>updateDgtEmptyOutContainerTransport<br/>isNeedFcmSend = false]
-    DGT_CHECK -->|❌ No| NORMAL_UPDATE[🔄 일반 운송 데이터 업데이트<br/>updateContainerTransport<br/>FCM 전송 필요성 체크]
+    POST_PROCESS --> TRUCK_CHECK{🚛 동일 트럭번호로<br/>기존 예약 있음?}
     
-    DGT_UPDATE --> POPUP2[🔔 팝업 데이터 처리<br/>saveNewAllconeShowPopup]
-    NORMAL_UPDATE --> POPUP2
+    TRUCK_CHECK -->|❌ No| SUCCESS[✅ 처리 완료]
+    TRUCK_CHECK -->|✅ Yes| CANCEL_OLD[❌ 기존 예약 취소]
+    CANCEL_OLD --> SUCCESS
     
-    %% 기존 데이터가 없는 경우 (신규)
-    EXIST_CHECK -->|❌ 없음| NEW_DELETE_CHECK{🗑️ COPINO 삭제 상태?<br/>COPINO_DELETED}
-    NEW_DELETE_CHECK -->|✅ Yes| NO_PROCESS2[⏸️ 아무 처리 안함]
-    NEW_DELETE_CHECK -->|❌ No| CHECK_GENERAL2[🔍 일반 컨테이너/트럭 정보 체크<br/>checkGeneralContainerAndTrucker]
-    CHECK_GENERAL2 --> CREATE[✨ 운송 데이터 생성<br/>createContainerTransportData]
-    CREATE --> POPUP3[🔔 팝업 데이터 처리<br/>saveNewAllconeShowPopup]
-    
-    %% 후처리 - 동일 트럭번호 체크
-    POPUP1 --> TRUCK_CHECK{🚛 동일 트럭번호<br/>기존 데이터 존재?}
-    NO_PROCESS --> TRUCK_CHECK
-    POPUP2 --> TRUCK_CHECK
-    NO_PROCESS2 --> TRUCK_CHECK
-    POPUP3 --> TRUCK_CHECK
-    
-    TRUCK_CHECK -->|❌ No| SUCCESS[✅ return isNeedFcmSend]
-    TRUCK_CHECK -->|✅ Yes| SPLIT_PIN[📝 pinNo 분할<br/>containerNumber, inOutType 추출]
-    SPLIT_PIN --> GET_EXPIRED[🔍 만료된 데이터 조회<br/>getAllconeTransportOrderDataForCheckExpired]
-    GET_EXPIRED --> EXPIRED_CHECK{🔍 만료된 데이터가<br/>현재와 다르고<br/>예약 완료 상태?}
-    
-    EXPIRED_CHECK -->|❌ No| SUCCESS
-    EXPIRED_CHECK -->|✅ Yes| CREATE_CANCEL[📋 예약 취소 파라미터 생성<br/>cancelParam]
-    CREATE_CANCEL --> CANCEL[❌ 예약 취소 실행<br/>cancelAppointment]
-    CANCEL --> SUCCESS
-    
-    %% 예외 처리
-    BLOCKCHAIN -.->|💥 Exception| EXCEPTION[❌ 예외 로그 출력<br/>return false]
-    FAIL3 --> FAIL_FINAL[❌ return false]
+    NO_UPDATE --> SUCCESS
+    NO_CREATE --> SUCCESS
+    SKIP --> SUCCESS
     
     %% 스타일링
     classDef startEnd fill:#e3f2fd,stroke:#1976d2,stroke-width:3px
@@ -83,16 +51,44 @@ graph TD
     classDef decision fill:#fff3e0,stroke:#f57c00,stroke-width:2px
     classDef success fill:#e8f5e8,stroke:#388e3c,stroke-width:3px
     classDef fail fill:#ffebee,stroke:#d32f2f,stroke-width:3px
+    classDef skip fill:#f5f5f5,stroke:#757575,stroke-width:2px
     
     class START startEnd
     class SUCCESS success
-    class FAIL1,FAIL2,FAIL3,FAIL_FINAL,EXCEPTION fail
-    class VALID_RESULT,VALID_COPINO,NEED_SAVE,EXIST_CHECK,GATE_CHECK,LOGIC_CHECK,DELETE_CHECK,DGT_CHECK,NEW_DELETE_CHECK,TRUCK_CHECK,EXPIRED_CHECK decision
+    class FAIL fail
+    class SKIP,NO_UPDATE,NO_CREATE skip
+    class VALID_CHECK,NEED_SAVE,EXIST_CHECK,STATUS_CHECK,CONDITION_CHECK,SPECIAL_CHECK,DELETE_CHECK,TRUCK_CHECK decision
 ```
----
 
-  
+## 주요 프로세스 단계
 
-- 각 분기에서 조건에 따라 함수가 종료되거나, 다음 단계로 넘어갑니다.
+### 1️⃣ 검증 단계
 
-- 예외 발생 시에는 에러 로그를 남기고 false를 반환하며 종료됩니다.
+- 블록체인에서 COPINO 정보 조회
+- 데이터 유효성 및 저장 필요성 검증
+
+### 2️⃣ 메인 처리 (분기)
+
+**기존 주문이 있는 경우:**
+
+- 현재 상태 확인 (GATE OUT/CANCEL vs 운송 중)
+- 업데이트 조건 확인
+- 특수 처리 대상 여부 확인 (DGT신항 EMPTY OUT)
+
+**신규 주문인 경우:**
+
+- 삭제된 COPINO가 아니면 새로운 운송 주문 생성
+
+### 3️⃣ 후처리
+
+- 알림 및 팝업 처리
+- 동일 트럭번호로 기존 예약이 있으면 취소
+
+### 📋 주요 분기점
+
+- **데이터 유효성**: 블록체인 조회 결과 검증
+- **저장 필요성**: 중복 데이터인지 확인
+- **기존 주문 존재**: 업데이트 vs 신규 생성
+- **현재 상태**: 최종 단계 vs 진행 중
+- **특수 조건**: DGT신항 EMPTY OUT 처리
+- **트럭번호 중복**: 기존 예약 취소 필요성
