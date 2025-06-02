@@ -71,7 +71,7 @@ graph TD
 
 **기존 주문이 있는 경우:**
 
-- 현재 상태 확인 (GATE OUT/CANCEL vs 운송 중)
+- 현재 상태 확인 (GATE OUT/CANCEL or 운송 중)
 - 업데이트 조건 확인
 - 특수 처리 대상 여부 확인 (DGT신항 EMPTY OUT)
 - [[컨테이너 운송 업데이트(DGT)]] or [[컨테이너 운송 업데이트(etc)]]
