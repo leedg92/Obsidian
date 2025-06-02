@@ -15,5 +15,5 @@
 
 ---
 ### 4. containerTransportDigitalGateMapper.saveContainerTransportDigitalGate(containerTransportDigitalGate)
-- 테이블: bctransdbx.container_transport_digital_gate
+- 테이블: bctransdbx.container_transport_digital_gate (컨테이너 운송 디지털 게이트(?))
 - 설명: 디지털게이트 사용 여부 등 관련 정보 저장
