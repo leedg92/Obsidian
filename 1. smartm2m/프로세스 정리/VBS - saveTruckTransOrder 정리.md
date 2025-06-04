@@ -7,7 +7,7 @@ graph TD
     VALIDATE --> VALID_CHECK{✅ 유효한 데이터?}
     VALID_CHECK -->|❌ No| FAIL[❌ 처리 실패]
     
-    VALID_CHECK -->|✅ Yes| NEED_SAVE{💾 저장이 필요한 데이터?}
+    VALID_CHECK -->|✅ Yes| NEED_SAVE{💾 COPINO 저장 필요 여부?}
     NEED_SAVE -->|❌ No| SKIP[⏸️ 저장 생략]
     
     NEED_SAVE -->|✅ Yes| EXIST_CHECK{🔍 기존 운송 주문 존재?}
