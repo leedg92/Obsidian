@@ -68,7 +68,7 @@ project-platform/
 │   │   ├── frontend/
 │   │   └── backend/
 │   ├── news-learning/      # 뉴스 학습기 (예정)
-│   └── bookmark/           # 북마크 관리 (예정)
+│   └── [etc projects]]/    # 북마크 관리 (예정)
 └── docs/                   # 문서
 ```
 
