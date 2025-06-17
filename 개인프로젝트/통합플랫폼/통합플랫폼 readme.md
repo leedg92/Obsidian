@@ -68,7 +68,7 @@ project-platform/
 │   │   ├── frontend/
 │   │   └── backend/
 │   ├── news-learning/      # 뉴스 학습기 (예정)
-│   └── [etc projects]]/    # 북마크 관리 (예정)
+│   └── [etc projects]]/    # 추가할 프로젝트들..
 └── docs/                   # 문서
 ```
 
@@ -87,7 +87,6 @@ project-platform/
 ### 📋 예정
 
 - [ ] 뉴스 기반 용어/개념 학습 서비스
-- [ ] 북마크 관리 시스템
 - [ ] 개인 대시보드
 - [ ] AWS 배포 및 도메인 연결
 
@@ -109,15 +108,10 @@ project-platform/
 
 - [📝 게시판](https://claude.ai/chat/projects/board/README.md)
 - [📰 뉴스 학습기](https://claude.ai/chat/projects/news-learning/README.md) (예정)
-- [🔖 북마크 관리](https://claude.ai/chat/projects/bookmark/README.md) (예정)
 
 ## 🤔 향후 아이디어
 
-- AI 기반 개인 비서
-- 가계부 관리 시스템
-- 운동 기록 트래커
-- 독서 기록 및 리뷰
-- 코딩 테스트 문제 관리
+- 엘라스틱서치 기반 캐글 데이터 자동 색인
 
 ---
 
