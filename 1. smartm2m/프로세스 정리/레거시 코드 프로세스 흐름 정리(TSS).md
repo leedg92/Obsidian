@@ -13,6 +13,6 @@
 1. \[tssTruckTransOrder\] <- docKey로 기존 운송 오더가 있는지 조회
 	- bctransdbx.tb_b_truck_trans_odr
 2. \[copinoResult\] <- 블록체인으로 GetCopino 요청
-3. (copinoResult not empty) Ktnet으로 데이터 전송 + 결과 데이터 저장
+3. (if copinoResult not empty) Ktnet으로 데이터 전송 + 결과 데이터 저장
 	- 데이터 저장 : general_container
 4. \[param\] <- 배차일시, 상태값 세팅
