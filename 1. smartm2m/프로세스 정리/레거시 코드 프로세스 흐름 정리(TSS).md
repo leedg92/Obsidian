@@ -34,4 +34,5 @@
 		3. 신규 오더 생성
 			- `container_transport_vbs_status`(param)
 			- `tb_b_truck_trans_odr`(param)
-8. 운송오더 갱신(param)
+8. 운송오더 갱신
+	- tb_b_trans_trucks(param)
