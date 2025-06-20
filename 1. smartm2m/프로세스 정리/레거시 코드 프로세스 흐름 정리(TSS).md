@@ -19,7 +19,7 @@
 5. <b style="color:yellow;">[param]</b> <- 컨테이너 무게 Integer로 변경
 6. <b style="color:yellow;">[param]</b> <- error 메세지 파싱(Y or N)
 7. <u style="color:red;">기존 운송 오더 존재[tssTuckTransOrder] ? </u>
-	- Y : <u style="color:red;">반출/반입 취소시간 존재 ? </u>
+	- Y : <u style="color:green;">반출/반입 취소시간 존재 ? </u>
 		- Y :  취소 오더 갱신
 			- `bctransdbx.tb_b_truck_trans_odr`
 		- N : 오더 갱신
@@ -32,3 +32,4 @@
 		3. 신규 오더 생성
 			- `container_transport_vbs_status`
 			- `tb_b_truck_trans_odr`
+- 
