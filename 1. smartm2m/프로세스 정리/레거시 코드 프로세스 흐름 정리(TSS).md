@@ -17,4 +17,4 @@
 	- 데이터 저장 : general_container
 4. \[param\] <- 배차일시, 상태값 세팅(배차일시 없으면 현재날짜로)
 5. \[param\] <- 컨테이너 무게 Integer로 변경
-6. 기존 운송오더 존재(tssTuckTransOrder) => 
+6. \[param]
