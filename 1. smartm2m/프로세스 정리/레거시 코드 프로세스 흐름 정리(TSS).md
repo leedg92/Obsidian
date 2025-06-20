@@ -11,9 +11,7 @@
 
 ### CreateCopino
 
-```
-Mermaid
-
+```mermaid
 flowchart TD
     A[saveTruckTransOrder 호출<br/>method: CreateCopino] --> B[기본 변수 초기화<br/>transStatus = 10<br/>ittTransStatus = READY]
     
