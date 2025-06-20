@@ -28,10 +28,10 @@
 			- `bctransdbx.tb_b_truck_trans_odr`
 	- <u style="color:red;">N</u> :
 		1. 컨테이너 정보 체크 + 갱신
-			-  데이터 갱신 : `general_container`
+			-  데이터 갱신 : `general_container`(param)
 		2. 운송사 정보 체크 (운송사 정보 없을 시 삽입)
-			- 데이터 삽입 : `general_trucker`
+			- 데이터 삽입 : `general_trucker`(param)
 		3. 신규 오더 생성
-			- `container_transport_vbs_status`
-			- `tb_b_truck_trans_odr`
+			- `container_transport_vbs_status`(param)
+			- `tb_b_truck_trans_odr`(param)
 - 
