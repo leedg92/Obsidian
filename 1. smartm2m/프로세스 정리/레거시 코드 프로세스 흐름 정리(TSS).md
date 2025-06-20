@@ -35,5 +35,18 @@
 			- `container_transport_vbs_status`(param)
 			- `tb_b_truck_trans_odr`(param)
 8. 운송오더 갱신
-	- tb_b_trans_trucks(param)
-9. <u style="color:red;">그룹배차 존재[param].get ? </u>
+	- `tb_b_trans_trucks`(param)
+9. <u style="color:red;">그룹배차 존재 [param].dispatchGroup ? </u>
+	- <u style="color:red;">Y</u> : <u style="color:green;">반출/반입 취소시간 존재 ? </u>
+		- <u style="color:green;">Y</u> :  취소 오더 갱신
+			- `bctransdbx.tb_b_truck_trans_odr`
+		- <u style="color:green;">N</u> : 오더 갱신
+			- `bctransdbx.tb_b_truck_trans_odr`
+	- <u style="color:red;">N</u> :
+		1. 컨테이너 정보 체크 + 갱신
+			-  데이터 갱신 : `general_container`(param)
+		2. 운송사 정보 체크 (운송사 정보 없을 시 삽입)
+			- 데이터 삽입 : `general_trucker`(param)
+		3. 신규 오더 생성
+			- `container_transport_vbs_status`(param)
+			- `tb_b_truck_trans_odr`(param)
