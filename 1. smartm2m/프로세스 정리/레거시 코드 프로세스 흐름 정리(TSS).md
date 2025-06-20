@@ -37,11 +37,9 @@
 8. 운송오더 갱신
 	- `tb_b_trans_trucks`(param)
 9. <u style="color:red;">그룹배차 존재 [param].dispatchGroup ? </u>
-	- <u style="color:red;">Y</u> : <u style="color:green;">반출/반입 취소시간 존재 ? </u>
-		- <u style="color:green;">Y</u> :  취소 오더 갱신
-			- `bctransdbx.tb_b_truck_trans_odr`
-		- <u style="color:green;">N</u> : 오더 갱신
-			- `bctransdbx.tb_b_truck_trans_odr`
+	- <u style="color:red;">Y</u> : 
+		- 그룹 오더 상태 저장
+			- `tb_b_truck_trans_odr_grp`(param)
 	- <u style="color:red;">N</u> :
 		1. 컨테이너 정보 체크 + 갱신
 			-  데이터 갱신 : `general_container`(param)
