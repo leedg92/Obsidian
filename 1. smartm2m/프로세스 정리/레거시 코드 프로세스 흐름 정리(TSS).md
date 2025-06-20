@@ -20,5 +20,5 @@
 6. <b style="color:yellow;">[param]</b> <- error 메세지 파싱(Y or N)
 7. <u style="color:red;">기존 운송 오더 존재[tssTuckTransOrder] ? </u>
 	- Y
-		1. 취소 오더 갱신
+		1. <u style="color:red;">반출 취소시간 존재 : </u> 취소 오더 갱신
 			- tb_b_truck_trans_odr
