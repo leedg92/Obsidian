@@ -79,4 +79,5 @@ flowchart TD
     style GG fill:#f3e5f5
 ```
 
-![[mermaid-diagram-2025-06-20-120604.png]]
+
+![[mermaid-diagram-2025-06-20-120620 2.svg]]
