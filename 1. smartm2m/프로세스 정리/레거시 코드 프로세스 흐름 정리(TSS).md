@@ -1,5 +1,6 @@
-## TSS
-- 공통 시작 변수선언
+
+### 공통 시작 변수선언
+
 ```
         Map<String, Object> param = new HashMap<>(message);
         String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
@@ -8,7 +9,7 @@
         IttTransStatus ittTransStatus = IttTransStatus.READY;
 ```
 
-- GateIn
-	1. docKey로 기존 운송 오더가 있는지 조회
-		- bctransdbx.tb_b_truck_trans_odr
-	2. 
+### GateIn
+1. docKey로 기존 운송 오더가 있는지 조회
+	- bctransdbx.tb_b_truck_trans_odr
+2. 
