@@ -16,4 +16,4 @@
 3. (if copinoResult not empty) Ktnet으로 데이터 전송 + 결과 데이터 저장
 	- 데이터 저장 : general_container
 4. \[param\] <- 배차일시, 상태값 세팅(배차일시 없으면 현재날짜로)
-5. 
+5. \[param\] <- 컨테이너 무게 Integer로 변경
