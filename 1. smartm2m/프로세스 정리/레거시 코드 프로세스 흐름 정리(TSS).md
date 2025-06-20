@@ -21,8 +21,8 @@
 7. <u style="color:red;">기존 운송 오더 존재[tssTuckTransOrder] ? </u>
 	- Y : <u style="color:red;">반출/반입 취소시간 존재 ? </u>
 		- Y :  취소 오더 갱신
-			- bctransdbx.tb_b_truck_trans_odr
+			- `bctransdbx.tb_b_truck_trans_odr`
 		- N : 오더 갱신
-			- bctransdbx.tb_b_truck_trans_odr
+			- `bctransdbx.tb_b_truck_trans_odr`
 	- N : 게이트 타입 갱신
-		- bctransdbx.tb_b_truck_trans_odr
+		- `bctransdbx.tb_b_truck_trans_odr`
