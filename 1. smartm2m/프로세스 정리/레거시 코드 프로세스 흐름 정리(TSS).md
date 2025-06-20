@@ -11,7 +11,7 @@
 
 ### CreateCopino
 1.  <b style="color:yellow;">[tssTruckTransOrder]</b> <- docKey로 기존 운송 오더가 있는지 조회
-	- bctransdbx.tb_b_truck_trans_odr
+	- `bctransdbx.tb_b_truck_trans_odr`
 2. <b style="color:yellow;">[copinoResult]</b> <- 블록체인으로 GetCopino 요청
 3. <u style="color:red;">코피노검증 결과 존재[copinoResult] : </u>  Ktnet으로 데이터 전송 + 결과 데이터 저장
 	- 데이터 저장 : general_container
@@ -24,4 +24,5 @@
 			- bctransdbx.tb_b_truck_trans_odr
 		- N : 오더 갱신
 			- bctransdbx.tb_b_truck_trans_odr
-	- N : 
+	- N : 게이트 타입 갱신
+		- bctransdbx.tb_b_truck_trans_odr
