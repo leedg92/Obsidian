@@ -10,8 +10,10 @@
 ```
 
 ### CreateCopino
+
 ```
-mermaid
+Mermaid
+
 flowchart TD
     A[saveTruckTransOrder 호출<br/>method: CreateCopino] --> B[기본 변수 초기화<br/>transStatus = 10<br/>ittTransStatus = READY]
     
@@ -78,3 +80,4 @@ flowchart TD
     style FF fill:#e8f5e8
     style GG fill:#f3e5f5
 ```
+``
