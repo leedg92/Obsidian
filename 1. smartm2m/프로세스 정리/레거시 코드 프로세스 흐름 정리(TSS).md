@@ -36,3 +36,4 @@
 			- `tb_b_truck_trans_odr`(param)
 8. 운송오더 갱신
 	- tb_b_trans_trucks(param)
+9. <u style="color:red;">그룹배차 존재[param].get ? </u>
