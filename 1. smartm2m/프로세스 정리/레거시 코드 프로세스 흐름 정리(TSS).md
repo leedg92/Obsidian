@@ -29,3 +29,6 @@
 			-  데이터 갱신 : `general_container`
 		2. 운송사 정보 체크 (운송사 정보 없을 시 삽입)
 			- 데이터 삽입 : `general_trucker`
+		3. 신규 오더 생성
+			- `container_transport_vbs_status`
+			- `tb_b_truck_trans_odr`
