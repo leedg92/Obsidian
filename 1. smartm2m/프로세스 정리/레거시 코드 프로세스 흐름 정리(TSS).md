@@ -15,7 +15,7 @@
 2. <b style="color:yellow;">[copinoResult]</b> <- 블록체인으로 GetCopino 요청
 3. <u style="color:red;">코피노검증 결과 존재(copinoResult) : </u>  Ktnet으로 데이터 전송 + 결과 데이터 저장
 	- 데이터 저장 : general_container
-4. \[param\] <- 배차일시, 상태값 세팅(배차일시 없으면 현재날짜로)
-5. \[param\] <- 컨테이너 무게 Integer로 변경
-6. \[param\] <- error 메세지 파싱(Y or N)
+4. <b style="color:yellow;">[param]</b> <- 배차일시, 상태값 세팅 (배차일시 없으면 현재날짜로)
+5. <b style="color:yellow;">[param]</b> <- 컨테이너 무게 Integer로 변경
+6. <b style="color:yellow;">[param]</b> <- error 메세지 파싱(Y or N)
 7. 
