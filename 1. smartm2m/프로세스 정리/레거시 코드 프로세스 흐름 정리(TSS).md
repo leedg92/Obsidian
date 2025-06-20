@@ -24,5 +24,8 @@
 			- `bctransdbx.tb_b_truck_trans_odr`
 		- N : 오더 갱신
 			- `bctransdbx.tb_b_truck_trans_odr`
-	- N : 컨테이너 정보 체크 + 갱신
-		- 데이터 갱신 : `general_container`
+	- N : 
+		1. 컨테이너 정보 체크 + 갱신
+			-  데이터 갱신 : `general_container`
+		2. 트럭정보 체크 + 갱신
+			- 데이터 갱신 : `general_trucker`
