@@ -19,12 +19,12 @@
 5. <b style="color:yellow;">[param]</b> <- 컨테이너 무게 Integer로 변경
 6. <b style="color:yellow;">[param]</b> <- error 메세지 파싱(Y or N)
 7. <u style="color:red;">기존 운송 오더 존재[tssTuckTransOrder] ? </u>
-	- Y : <u style="color:green;">반출/반입 취소시간 존재 ? </u>
-		- Y :  취소 오더 갱신
+	- <u style="color:red;">Y</u> : <u style="color:green;">반출/반입 취소시간 존재 ? </u>
+		- <u style="color:green;">Y</u> :  취소 오더 갱신
 			- `bctransdbx.tb_b_truck_trans_odr`
-		- N : 오더 갱신
+		- <u style="color:green;">N</u> : 오더 갱신
 			- `bctransdbx.tb_b_truck_trans_odr`
-	- N : 
+	- <u style="color:red;">N</u> 
 		1. 컨테이너 정보 체크 + 갱신
 			-  데이터 갱신 : `general_container`
 		2. 운송사 정보 체크 (운송사 정보 없을 시 삽입)
