@@ -12,4 +12,4 @@
 ### GateIn
 1. docKey로 기존 운송 오더가 있는지 조회
 	- bctransdbx.tb_b_truck_trans_odr
-2. 
+2. getCopino
