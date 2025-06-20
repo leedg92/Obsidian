@@ -27,5 +27,5 @@
 	- N : 
 		1. 컨테이너 정보 체크 + 갱신
 			-  데이터 갱신 : `general_container`
-		2. 트럭정보 체크 + 갱신
-			- 데이터 갱신 : `general_trucker`
+		2. 운송사 정보 체크 (운송사 정보 없을 시 삽입)
+			- 데이터 삽입 : `general_trucker`
