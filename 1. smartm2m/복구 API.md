@@ -93,7 +93,7 @@
 **기본 정보**
 - **URL**: `POST /itt/invoke/recovery`
 - **Content-Type**: `application/json`
-- **설명**: 단일 ITT 운송건을 복구 처리합니다.
+- **설명**: 단일 TSS 운송건을 복구 처리합니다.
 
 **Request Body**
 ```json
@@ -123,7 +123,7 @@
 **기본 정보**
 - **URL**: `POST /itt/invoke/recovery/bulk`
 - **Content-Type**: `application/json`
-- **설명**: 여러 ITT 운송건을 한 번에 복구 처리합니다.
+- **설명**: 여러 TSS 운송건을 한 번에 복구 처리합니다.
 
 **Request Body**
 ```json
