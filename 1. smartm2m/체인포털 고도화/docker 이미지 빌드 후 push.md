@@ -4,7 +4,7 @@
 ```
 docker login registry.smartm2m.co.kr
 Username: m2m
-Password:
+Password: rootPass
 ```
 ## 2. BUILD 
 ```
