@@ -16,5 +16,3 @@
         
         `git pull origin main`
         
-
-
