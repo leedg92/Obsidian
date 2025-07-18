@@ -20,4 +20,4 @@
 
 
 
-`git clone https://leedg92%40naver.com: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@https://github.com/leedg92/Obsidian.git`
+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
