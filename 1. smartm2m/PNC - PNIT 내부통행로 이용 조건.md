@@ -64,7 +64,7 @@ if (20ft 컨테이너 >= 2개) {
 선사: MSC
 운송사: CITLC051
 터미널: PNCOC010 → PNITC050 (또는 역방향)
-컨테이너: [TSS, 20ft, TSS 40ft, TSS 20ft 결합
+컨테이너: [TSS,VBS] 20ft, 40ft, 20ft 결합
 조건: 모든 작업 완료 + 과치수 아님
 ```
 
