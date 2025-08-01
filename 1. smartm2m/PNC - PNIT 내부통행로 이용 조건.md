@@ -24,14 +24,14 @@ TERMINAL_USE_INTERNAL_GATE = 'TML_CONFIG_ACT'
 ```
 
 ### 3️⃣ **컨테이너 타입별 허용 조건**
-| 서비스 타입 | 컨테이너 크기 | 설정 필드 | 예시 데이터 |
-|-------------|---------------|-----------|-------------|
-| **VBS** | 20ft | `edi20FtYN = 1` | ❌ (0) |
-| **VBS** | 40ft | `edi40FtYN = 1` | ❌ (0) |
-| **VBS** | 20ft 결합 | `edi20FtCombinedYN = 1` | ❌ (0) |
-| **TSS** | 20ft | `tss20FtYN = 1` | ✅ (1) |
-| **TSS** | 40ft | `tss40FtYN = 1` | ✅ (1) |
-| **TSS** | 20ft 결합 | `tss20FtCombinedYN = 1` | ✅ (1) |
+| 서비스 타입  | 컨테이너 크기 | 설정 필드                   | 예시 데이터 |
+| ------- | ------- | ----------------------- | ------ |
+| **VBS** | 20ft    | `edi20FtYN = 1`         | ✅ (1)  |
+| **VBS** | 40ft    | `edi40FtYN = 1`         | ✅ (1)  |
+| **VBS** | 20ft 결합 | `edi20FtCombinedYN = 1` | ✅ (1)  |
+| **TSS** | 20ft    | `tss20FtYN = 1`         | ✅ (1)  |
+| **TSS** | 40ft    | `tss40FtYN = 1`         | ✅ (1)  |
+| **TSS** | 20ft 결합 | `tss20FtCombinedYN = 1` | ✅ (1)  |
 
 ### 4️⃣ **OOG 컨테이너 제외 조건**
 ```java
@@ -64,7 +64,7 @@ if (20ft 컨테이너 >= 2개) {
 선사: MSC
 운송사: CITLC051
 터미널: PNCOC010 → PNITC050 (또는 역방향)
-컨테이너: TSS 20ft, TSS 40ft, TSS 20ft 결합
+컨테이너: [TSS, 20ft, TSS 40ft, TSS 20ft 결합
 조건: 모든 작업 완료 + 과치수 아님
 ```
 
