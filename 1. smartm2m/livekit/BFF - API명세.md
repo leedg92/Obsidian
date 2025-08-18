@@ -78,9 +78,8 @@
 
 ```json
 {
-  "truckNo": "string",      // 트럭번호 (필수)
-  "counselorId": "string",  // 상담사 아이디 (필수)
-  "counselor": boolean      // 상담사 여부 (true: 상담사가 종료, false: 운전기사가 종료)
+  "roomName": "string",      // 방번호 (필수)
+  "isCounselor": boolean      // 상담사 여부 (true: 상담사가 종료, false: 운전기사가 종료)
 }
 ```
 
