@@ -4,7 +4,7 @@
 
 ### API 정보
 
-- **API명**: `/mirroring/startMirroring`
+- **API명**: `http://133.186.222.171:19090/mirroring/startMirroring`
 - **Method**: `POST`
 - **용도**: 트럭번호와 상담사 아이디를 받아서 JWT 토큰을 생성하고, 운전기사에게 FCM 알림을 전송한 후 상담사에게 토큰을 리턴
 
@@ -43,7 +43,7 @@
 
 ### API 정보
 
-- **API명**: `/mirroring/getRoomList`
+- **API명**: `http://133.186.222.171:19090/mirroring/getRoomList`
 - **Method**: `GET`
 - **용도**: 현재 생성된 미러링 룸 목록을 조회
 
@@ -70,7 +70,7 @@
 
 ### API 정보
 
-- **API명**: `/mirroring/endMirroring`
+- **API명**: `http://133.186.222.171:19090/mirroring/endMirroring`
 - **Method**: `POST`
 - **용도**: 미러링 세션을 종료하고, 상담사가 종료한 경우 운전기사에게 FCM 알림을 전송
 
