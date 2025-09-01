@@ -167,12 +167,7 @@ ChainPortal 민원 처리 시스템의 REST API 명세서입니다. 이 시스�
 - **Request Body**:
 ```json
 {
-  "complaintKey": "민원 ID",
-  "pinNo": "PIN 번호",
-  "systemKey": "시스템 ID",
-  "faultKey": 1,
-  "user": "삭제자",
-  "context": "삭제 내용"
+  "complaintKey": "민원 ID"
 }
 ```
 - **Response**:
