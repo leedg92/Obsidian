@@ -145,7 +145,7 @@
 
 **요청 예시**
 ```
-GET /pinNo/list?complaintId=COMPLAINT_2024_001
+GET /pinNo/list?complaintId=001
 ```
 
 **응답**
@@ -218,7 +218,7 @@ GET /systems/detailList?systemLoc=INTERNAL
   "resultMessage": "정상 처리되었습니다.",
   "data": [
     {
-      "value": "SYS_001",
+      "value": "SYSTEMKEY",
       "label": "게이트 관리 시스템"
     },
     {
@@ -245,7 +245,7 @@ GET /systems/detailList?systemLoc=INTERNAL
 
 **요청 예시**
 ```
-GET /handles/detail?complaintId=COMPLAINT_2024_001
+GET /handles/detail?complaintId=001
 ```
 
 **응답**
@@ -318,9 +318,9 @@ GET /handles/detail?complaintId=COMPLAINT_2024_001
 **요청 본문**
 ```json
 {
-  "key": "COMPLAINT_2024_001",
+  "key": "001",
   "pinNo": "PIN123456",
-  "systemKey": "SYS_001",
+  "systemKey": "SYSTEMKEY",
   "faultKey": 1,
   "user": "관리자",
   "context": "수정된 처리 내용"
