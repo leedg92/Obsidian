@@ -245,7 +245,7 @@ GET /systems/detailList?systemLoc=I
 
 **요청 예시**
 ```
-GET /handles/detail?complaintId=001
+GET /handles/detail?complaintKey=001
 ```
 
 **응답**
