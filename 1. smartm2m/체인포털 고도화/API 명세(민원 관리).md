@@ -56,6 +56,7 @@
 ```
 
 **요청 필드**
+
 | 필드 | 타입 | 필수 | 설명 |
 |------|------|------|------|
 | context | String | Y | 주요 장애사항 내용 |
@@ -253,9 +254,9 @@ GET /handles/detail?complaintId=COMPLAINT_2024_001
   "result": "success",
   "resultMessage": "정상 처리되었습니다.",
   "data": {
-    "key": "COMPLAINT_2024_001",
+    "key": "001",
     "pinNo": "PIN123456",
-    "systemKey": "SYS_001",
+    "systemKey": "SYSTEMKEY",
     "faultKey": 1,
     "user": "관리자",
     "context": "네트워크 연결 문제로 인한 게이트 시스템 장애 처리 완료"
@@ -281,9 +282,9 @@ GET /handles/detail?complaintId=COMPLAINT_2024_001
 **요청 본문**
 ```json
 {
-  "key": "COMPLAINT_2024_001",
+  "key": "001",
   "pinNo": "PIN123456",
-  "systemKey": "SYS_001",
+  "systemKey": "SYSTEMKEY",
   "faultKey": 1,
   "user": "관리자",
   "context": "처리 내용"
