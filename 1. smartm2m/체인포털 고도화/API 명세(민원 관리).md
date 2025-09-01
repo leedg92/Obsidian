@@ -202,13 +202,13 @@ GET /pinNo/list?complaintId=001
 
 **요청 파라미터**
 
-| 파라미터 | 타입 | 필수 | 설명 |
-|----------|------|------|------|
-| systemLoc | String | Y | 시스템 위치 (INTERNAL/EXTERNAL) |
+| 파라미터      | 타입     | 필수  | 설명           |
+| --------- | ------ | --- | ------------ |
+| systemLoc | String | Y   | 시스템 위치 (I/E) |
 
 **요청 예시**
 ```
-GET /systems/detailList?systemLoc=INTERNAL
+GET /systems/detailList?systemLoc=I
 ```
 
 **응답**
