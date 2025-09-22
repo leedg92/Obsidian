@@ -1,6 +1,7 @@
+
 TB_COPARN(컨테이너 사전통지) 테이블과 TB_RF_ONOFF(리퍼 전원상태) 테이블을 LEFT JOIN하여,
 아직 사용되지 않은(USED_DATE IS NULL) 반입/반출 모드(IO_MODE가 'I' 또는 'O')의 컨테이너 정보 중
-마지막 처리 순번 이후의 새로운 데이터(TRANS_ODR_NO > 기준값)이면서 아직 차량예약 인터페이스에 전송되지 않은(IF_VEHICLE_BOOKING에 존재하지 않는) 건들을 대상으로, 중복을 제거하고(GROUP BY + HAVING COUNT(*)=1) 문서키 순으로 정렬하여 최대 300건까지 조회하는 쿼리이다.
+마지막 처리 순번 이후의 새로운 데이터(TRANS_ODR_NO > 기준값)이면서 아직 차량예약 인터페이스에 전송되지 않은(IF_VEHICLE_BOOKING에 존재하지 않는) 건들을 대상으로, 중복을 제거하고(GROUP BY + HAVING COUNT(*)=1) 문서키 순으로 정렬하여 최대 300건까지 조회
 
 
 
