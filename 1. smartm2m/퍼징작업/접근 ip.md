@@ -1,0 +1,23 @@
+|                         |              |      |
+| ----------------------- | ------------ | ---- |
+| 서버명                     | 접속IP         | 접속포트 |
+| bpa-service-control     | 172.28.0.9   | 22   |
+| bpa-tss-openapi         | 172.28.0.18  | 22   |
+| bpa-porti               | 172.28.0.107 | 22   |
+| bpa-logger0             | 172.28.0.80  | 22   |
+| bpa-peer1               | 172.28.0.25  | 22   |
+| bpa-peer0               | 172.28.0.36  | 22   |
+| bpa-orderer2            | 172.28.0.16  | 22   |
+| bpa-orderer1            | 172.28.0.5   | 22   |
+| bpa-orderer0            | 172.28.0.49  | 22   |
+| accio-bpa-service-1     | 172.28.0.47  | 22   |
+| bpa-chaincode           | 172.28.0.78  | 22   |
+| accio-bpa-storage-3     | 172.28.0.58  | 22   |
+| accio-bpa-storage-2     | 172.28.0.73  | 22   |
+| accio-bpa-storage-1     | 172.28.0.98  | 22   |
+| accio-bpa-master-3      | 172.28.0.81  | 22   |
+| accio-bpa-master-2      | 172.28.0.63  | 22   |
+| accio-bpa-master-1      | 172.28.0.83  | 22   |
+| accio-bpa-registry      | 172.28.0.38  | 22   |
+| Accio-bpa-netmaker      | 172.28.0.13  | 22   |
+| Accio-bpa-load-balancer | 172.28.0.11  | 22   |
