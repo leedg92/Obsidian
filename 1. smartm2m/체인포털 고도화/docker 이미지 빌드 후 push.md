@@ -8,7 +8,7 @@ Password: rootPass
 ```
 ## 2. BUILD 
 ```
-docker build -t registry.smartm2m.co.kr/bpahealth/chainportal-terminal-status_api:latest .
+docker build -t registry.smartm2m.co.kr/chainportal/ccs-resource-api:260108-01 .
 ```
 ## 3. PUSH
 ```
