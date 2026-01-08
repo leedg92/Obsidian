@@ -12,5 +12,5 @@ docker build -t registry.smartm2m.co.kr/chainportal/ccs-resource-api:260108-01 .
 ```
 ## 3. PUSH
 ```
-docker push registry.smartm2m.co.kr/bpahealth/chainportal-terminal-status_api:latest
+docker push registry.smartm2m.co.kr/chainportal/ccs-resource-api:260108-01
 ```
