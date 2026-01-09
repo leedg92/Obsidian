@@ -8,15 +8,15 @@ Password: rootPass
 ```
 ## 2. BUILD 
 ```
-docker build -t registry.smartm2m.co.kr/chainportal/ccs-history-api:260109-01 .
+docker build -t registry.smartm2m.co.kr/chainportal/ccs-history-db:260109-01 .
 ```
 
 ## 2.1 BUILD(자바 Maven GOAL 세팅 시)
 ```
-docker build --build-arg MAVEN_GOAL="package" --build-arg MAVEN_OPTS="-DskipTests" -t registry.smartm2m.co.kr/chainportal/ccs-history-api:260109-01 .
+docker build --build-arg MAVEN_GOAL="package" --build-arg MAVEN_OPTS="-DskipTests" -t registry.smartm2m.co.kr/chainportal/ccs-history-db:260109-01 .
 ```
 
 ## 3. PUSH
 ```
-docker push registry.smartm2m.co.kr/chainportal/ccs-history-api:260109-01
+docker push registry.smartm2m.co.kr/chainportal/ccs-history-db:260109-01
 ```
