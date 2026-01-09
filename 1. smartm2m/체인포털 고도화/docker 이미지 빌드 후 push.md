@@ -8,7 +8,7 @@ Password: rootPass
 ```
 ## 2. BUILD 
 ```
-docker build -t registry.smartm2m.co.kr/chainportal/ccs-complaint-handling:260109-01 .
+docker build -t registry.smartm2m.co.kr/chainportal/ccs-emergency-alarm:260109-01 .
 ```
 
 ## 2.1 BUILD(자바 Maven GOAL 세팅 시)
