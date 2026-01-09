@@ -10,6 +10,9 @@ Password: rootPass
 ```
 docker build -t registry.smartm2m.co.kr/chainportal/ccs-complaint-handling:260109-01 .
 ```
+
+## 2.1 BUILD(자바 Maven go)
+
 ## 3. PUSH
 ```
 docker push registry.smartm2m.co.kr/chainportal/ccs-complaint-handling:260109-01
