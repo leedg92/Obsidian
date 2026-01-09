@@ -8,7 +8,7 @@ Password: rootPass
 ```
 ## 2. BUILD 
 ```
-docker build -t registry.smartm2m.co.kr/chainportal/ccs-resource-api:260108-01 .
+docker build -t registry.smartm2m.co.kr/chainportal/ccs-:260109-01 .
 ```
 ## 3. PUSH
 ```
