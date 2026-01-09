@@ -18,5 +18,5 @@ docker build --build-arg MAVEN_GOAL="package" --build-arg MAVEN_OPTS="-DskipTest
 
 ## 3. PUSH
 ```
-docker push registry.smartm2m.co.kr/chainportal/ccs-history-db:260109-01
+docker push registry.smartm2m.co.kr/chainportal/chainportal-control-system:260109-01
 ```
