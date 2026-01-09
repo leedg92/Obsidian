@@ -12,5 +12,5 @@ docker build -t registry.smartm2m.co.kr/chainportal/ccs-complaint-handling:26010
 ```
 ## 3. PUSH
 ```
-docker push registry.smartm2m.co.kr/chainportal/ccs-resource-api:260108-01
+docker push registry.smartm2m.co.kr/chainportal/ccs-complaint-handling:260109-01
 ```
