@@ -177,22 +177,6 @@ mariadb-upgrade -u root -p
 mysqlcheck --all-databases --check -u root -p
 ```
 
-**4) 검증 항목**
-
-- [ ] 리스토어 정상 완료
-- [ ] mariadb-upgrade 에러 없음
-- [ ] 주요 테이블 row count 일치
-- [ ] Spring Boot 앱 연결 정상
-- [ ] 주요 CRUD 동작 확인
-- [ ] JOIN 쿼리에서 collation 에러 없음
-- [ ] DATA_SYNC 동작 확인
-
-**산출물:**
-
-- [ ] 테스트 결과 보고서
-- [ ] 이슈 목록 및 해결 방안
-- [ ] 확정된 my.cnf
-
 ---
 
 #### Phase 3-1: 명절 전날 사전 작업 (2026-02-16)
@@ -267,76 +251,6 @@ mysql -u root -p < pre_dump_b.sql
 
 - 신규 서버인 경우: 기존 서버의 MariaDB 10.5를 그대로 재가동
 - 같은 서버인 경우: 백업해둔 데이터 디렉토리 복원 후 MariaDB 10.5 재설치
-
----
-
-#### Phase 4: 사후 모니터링 (명절 이후 1~2주)
-
-- [ ] 에러 로그 일일 확인: /var/lib/mysql/*.err
-- [ ] 슬로우 쿼리 모니터링
-- [ ] Signal 6 재발 여부 확인
-- [ ] 정상 확인 후 기존 서버/백업 데이터 정리
-
----
-
-## 2. Community vs Enterprise 비교
-
-### 2.1 기능 비교
-
-|항목|Community (현재)|Enterprise|
-|---|---|---|
-|DB 엔진|MariaDB Server|거의 동일 (추가 테스트 빌드)|
-|기술 지원|없음 (커뮤니티 포럼만)|24x7 전문 엔지니어 + SLA 보장|
-|유지보수 기간|3년|최대 8년|
-|버그 수정|분기별 릴리스 대기|우선 처리 + 커스텀 핫픽스|
-|MaxScale (DB 프록시)|2노드까지 무료|제한 없음|
-|백업 도구|MariaBackup 기본|Enterprise Backup (락 최소화)|
-|감사(Audit)|기본 플러그인|Enterprise Audit (고급)|
-|KMS 연동|미지원|HashiCorp Vault 등 연동|
-|컨설팅/교육|없음|커스텀 교육, 전략 컨설팅|
-
-### 2.2 비용
-
-|플랜|서버당 연간 비용|
-|---|---|
-|Enterprise Standard|$2,500|
-|Enterprise Advanced|$5,000|
-|Enterprise Cluster|$6,500/노드|
-
-※ 서버 대수에 따라 총 비용 산정 필요
-
-### 2.3 검토 의견
-
-**현재 환경(단일 DB)에서는 Community로 충분함.**
-
-Enterprise 전환이 필요한 시점:
-
-- 이중화(HA) 도입 시 MaxScale 3노드 이상 사용 필요
-- 장애 대응 시 SLA 기반 전문 기술지원 필요
-- 유지보수 기간 연장 필요 (3년 → 8년)
-
----
-
-## 3. 향후 검토 사항: 이중화 (HA)
-
-### 3.1 이중화 구성
-
-```
-[Spring Boot App] → [MaxScale] → [MariaDB Master] (쓰기)
-                      (프록시)  → [MariaDB Slave]  (읽기)
-```
-
-### 3.2 이중화 도입 근거
-
-- 이번 Signal 6 장애는 물리적 corruption (페이지 깨짐)
-- 물리적 corruption은 Master/Slave 간 전파되지 않음
-- 이중화가 있었다면 Master 장애 시 Slave로 자동 전환되어 서비스 중단 없었음
-
-### 3.3 이중화 도입 시 필요 사항
-
-- 서버 최소 3대 (Master + Slave + MaxScale)
-- MaxScale 3노드 이상 시 Enterprise 라이선스 필요
-- 별도 프로젝트로 계획 수립 필요
 
 ---
 
