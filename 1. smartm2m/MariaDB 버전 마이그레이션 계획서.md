@@ -101,7 +101,7 @@ mysqlcheck --all-databases --check -u root -p
 
 **7) 애플리케이션 호환성 확인**
 
-> ⚠️ **10.6 변경사항:** `OFFSET`이 예약어(Reserved Word)로 지정됨. 소스코드에서 `OFFSET`을 컬럼명이나 별칭으로 사용하고 있으면 11.8에서 SQL 문법 에러가 발생하므로 사전 확인 필요.
+> **10.6 변경사항:** `OFFSET`이 예약어(Reserved Word)로 지정됨. 소스코드에서 `OFFSET`을 컬럼명이나 별칭으로 사용하고 있으면 11.8에서 SQL 문법 에러가 발생하므로 사전 확인 필요.
 
 ```bash
 # OFFSET 예약어 사용 여부 (10.6부터 예약어)
@@ -113,15 +113,6 @@ grep -rni "OFFSET" --include="*.java" --include="*.xml" src/
 ```bash
 cp /etc/my.cnf.d/server.cnf ~/backup_server.cnf
 ```
-
-**산출물:**
-
-- [ ] 테이블별 용량 목록
-- [ ] 테이블 분류표 (A/B/C)
-- [ ] charset 현황 정리
-- [ ] CHECK TABLE 결과
-- [ ] OFFSET 사용처 목록
-- [ ] 현행 my.cnf 백업
 
 ---
 
