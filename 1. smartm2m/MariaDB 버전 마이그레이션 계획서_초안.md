@@ -26,6 +26,11 @@ binlog_format = ROW
 # 기존 데이터 호환을 위해 명시적으로 지정
 character-set-server = utf8mb3
 collation-server = utf8mb3_general_ci
+
+# binlog format 변경 (STATEMENT → ROW)
+# - 대표님 지시사항: INSERT...ON DUPLICATE KEY UPDATE 구문의 동시 실행 시 락 경합 완화를 위해 ROW 모드로 변경
+binlog_format = ROW
+
 ```
 
 ### 1.4 작업 일정
