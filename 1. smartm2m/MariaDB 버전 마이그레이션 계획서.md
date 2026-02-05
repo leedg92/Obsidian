@@ -71,6 +71,8 @@ ORDER BY update_time DESC;
 
 **4) 테이블 charset/collation 현황**
 
+> **11.8 변경사항:** 기본 charset이 `latin1` → `utf8mb4`로, 기본 collation이 `utf8mb3_general_ci` → `utf8mb4_uca1400_ai_ci`로 변경됨. `character-set-server=utf8mb3`으로 설정하더라도, 기존 테이블 중 charset이 제각각인 경우 리스토어 후 JOIN 시 `Illegal mix of collations` 에러가 발생할 수 있으므로 사전 파악 필요.
+
 ```sql
 SELECT table_schema, table_name, table_collation
 FROM information_schema.tables
@@ -79,6 +81,8 @@ ORDER BY table_schema, table_name;
 ```
 
 **5) 컬럼 레벨 charset/collation 확인**
+
+> **11.8 변경사항:** 테이블 레벨뿐 아니라 컬럼 단위로도 charset이 다를 수 있음. 기존 컬럼이 `latin1`, `utf8mb3` 등 혼재된 경우 11.8 환경에서 문제가 될 수 있으므로 컬럼 레벨까지 확인 필요.
 
 ```sql
 SELECT table_schema, table_name, column_name,
@@ -96,6 +100,8 @@ mysqlcheck --all-databases --check -u root -p
 ```
 
 **7) 애플리케이션 호환성 확인**
+
+> ⚠️ **10.6 변경사항:** `OFFSET`이 예약어(Reserved Word)로 지정됨. 소스코드에서 `OFFSET`을 컬럼명이나 별칭으로 사용하고 있으면 11.8에서 SQL 문법 에러가 발생하므로 사전 확인 필요.
 
 ```bash
 # OFFSET 예약어 사용 여부 (10.6부터 예약어)
