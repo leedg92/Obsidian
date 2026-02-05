@@ -230,8 +230,8 @@ mysql -u root -p < pre_dump_b.sql
      mysql -u root -p < delta_a.sql
      mysql -u root -p < dump_c.sql
 
-□ 8. 업그레이드 및 검증
-     mariadb-upgrade -u root -p
+□ 8. 시스템 테이블 호환성 검증
+     mariadb-upgrade -u root -p       # 시스템 테이블을 11.8 형식으로 변환
      mysqlcheck --all-databases --check -u root -p
 
 □ 9. 데이터 검증
