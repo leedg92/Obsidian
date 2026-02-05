@@ -114,14 +114,6 @@ grep -rni "OFFSET" --include="*.java" --include="*.xml" src/
 cp /etc/my.cnf.d/server.cnf ~/backup_server.cnf
 ```
 
-**산출물:**
-
-- [ ] 테이블별 용량 목록
-- [ ] 테이블 분류표 (A/B/C)
-- [ ] charset 현황 정리
-- [ ] CHECK TABLE 결과
-- [ ] OFFSET 사용처 목록
-- [ ] 현행 my.cnf 백업
 
 ---
 
@@ -148,6 +140,7 @@ cp /etc/my.cnf.d/server.cnf ~/backup_server.cnf
 #### Phase 2: 테스트 환경 검증 (명절 전까지)
 
 **1) 테스트 서버에 Rocky Linux + MariaDB 11.8 설치**
+- VM으로 할지 인스턴스를 추가할지 정해야함
 
 ```bash
 curl -LsS https://r.mariadb.com/downloads/mariadb_repo_setup | \
