@@ -1,0 +1,348 @@
+# MariaDB 버전 마이그레이션 계획서
+
+## 1. 마이그레이션 계획 (10.5.9 → 11.8 LTS)
+
+### 1.1 마이그레이션 방식
+
+- **방식: 덤프 & 리스토어 (신규 설치)**
+- in-place 업그레이드 방식은 패치/마이너 버전을 순차적으로 올려야 정상동작함(MariaDB jira) :
+    - 기존 .ibd 파일에 corruption 이력이 있어 신뢰할 수 없음
+    - 10.5 → 11.8은 메이저 버전 4단계를 건너뛰는 작업
+    - 신규 설치 시 인덱스, 페이지 구조가 새로 생성되어 기존 파일 레벨 문제 해소
+
+### 1.2 서버 환경
+
+- 마이그레이션 타겟 서버는 기존 서버 또는 신규 서버 모두 가능
+- 어느 경우든 **OS 재설치(Rocky Linux)** 후 MariaDB 11.8을 신규 설치하는 방식으로 진행
+- 기존 서버에 진행할 경우, 롤백을 위해 OS 재설치 전 데이터 디렉토리 및 설정 파일 별도 백업 필수
+- 신규 서버에 진행할 경우, 롤백은 기존 서버를 그대로 재가동하면 되므로 더 안전함
+
+### 1.3 11.8 주요 설정
+
+```ini
+[mysqld]
+# binlog format 변경 (STATEMENT → ROW)
+binlog_format = ROW
+
+# 11.8 기본 charset이 utf8mb4로 변경되었으므로
+# 기존 데이터 호환을 위해 명시적으로 지정
+character-set-server = utf8mb3
+collation-server = utf8mb3_general_ci
+```
+
+### 1.4 작업 일정
+
+- **D-Day: 2026-02-17 (설 명절)**
+- 해당 일자에 터미널이 닫혀 전산 작업이 모두 중지되므로 서비스 중단 가능
+
+---
+
+#### Phase 1: 사전 조사 (명절 전까지)
+
+서비스 영향 없이 진행 가능한 작업.
+
+**1) DB 용량 파악**
+
+```sql
+SELECT table_schema, table_name,
+  ROUND((data_length + index_length)/1024/1024, 1) AS size_mb,
+  table_rows
+FROM information_schema.tables
+WHERE table_schema NOT IN ('mysql','information_schema','performance_schema')
+ORDER BY (data_length + index_length) DESC;
+```
+
+**2) 날짜 컬럼 유무 확인 (델타 덤프 가능 여부 판단)**
+
+```sql
+SELECT table_schema, table_name, column_name
+FROM information_schema.columns
+WHERE column_name IN ('created_at','reg_dt','reg_date','insert_dt','log_dt','log_date')
+  AND table_schema NOT IN ('mysql','information_schema','performance_schema')
+ORDER BY table_schema, table_name;
+```
+
+**3) 최근 변경 여부 확인**
+
+```sql
+SELECT table_schema, table_name, update_time
+FROM information_schema.tables
+WHERE table_schema NOT IN ('mysql','information_schema','performance_schema')
+ORDER BY update_time DESC;
+```
+
+**4) 테이블 charset/collation 현황**
+
+```sql
+SELECT table_schema, table_name, table_collation
+FROM information_schema.tables
+WHERE table_schema NOT IN ('mysql','information_schema','performance_schema')
+ORDER BY table_schema, table_name;
+```
+
+**5) 컬럼 레벨 charset/collation 확인**
+
+```sql
+SELECT table_schema, table_name, column_name,
+  character_set_name, collation_name
+FROM information_schema.columns
+WHERE character_set_name IS NOT NULL
+  AND table_schema NOT IN ('mysql','information_schema','performance_schema')
+ORDER BY table_schema, table_name;
+```
+
+**6) 데이터 무결성 검증**
+
+```bash
+mysqlcheck --all-databases --check -u root -p
+```
+
+**7) 애플리케이션 호환성 확인**
+
+```bash
+# OFFSET 예약어 사용 여부 (10.6부터 예약어)
+grep -rni "OFFSET" --include="*.java" --include="*.xml" src/
+```
+
+**8) 현행 my.cnf 설정 백업**
+
+```bash
+cp /etc/my.cnf.d/server.cnf ~/backup_server.cnf
+```
+
+**산출물:**
+
+- [ ] 테이블별 용량 목록
+- [ ] 테이블 분류표 (A/B/C)
+- [ ] charset 현황 정리
+- [ ] CHECK TABLE 결과
+- [ ] OFFSET 사용처 목록
+- [ ] 현행 my.cnf 백업
+
+---
+
+#### Phase 1.5: 테이블 분류
+
+사전 조사 결과를 바탕으로 테이블을 아래 기준으로 분류.
+
+|분류|기준|덤프 시점|비고|
+|---|---|---|---|
+|A. 대용량 + 거의 안 변함|로그/이력 테이블, 날짜 컬럼 있음|전날 풀 덤프 + 당일 델타|created_at 등으로 델타 추출|
+|B. 절대 안 변함|코드/메타데이터 테이블, update_time 오래됨|전날 풀 덤프로 끝|당일 추가 작업 없음|
+|C. 실시간 변경|업무/사용자 데이터|당일 풀 덤프|서비스 중지 후 진행|
+
+**분류 기준:**
+
+- 용량 크고 + 날짜 컬럼 있고 + 최근 변경 적음 → A
+- 변경 전혀 없음 → B
+- 날짜 컬럼 없거나, 실시간 변경됨 → C
+
+**목표:** 당일 풀 덤프 대상(C)의 총 용량을 최소화하여 작업 시간 단축
+
+---
+
+#### Phase 2: 테스트 환경 검증 (명절 전까지)
+
+**1) 테스트 서버에 Rocky Linux + MariaDB 11.8 설치**
+
+```bash
+curl -LsS https://r.mariadb.com/downloads/mariadb_repo_setup | \
+  sudo bash -s -- --mariadb-server-version="mariadb-11.8"
+sudo dnf install MariaDB-server MariaDB-client
+```
+
+**2) my.cnf 설정 적용**
+
+- binlog_format = ROW
+- character-set-server = utf8mb3
+- collation-server = utf8mb3_general_ci
+- 기존 innodb 관련 설정 이관
+
+**3) 테스트용 덤프 & 리스토어**
+
+```bash
+# 현행에서 덤프 (서비스 영향 없음)
+mysqldump -u root -p \
+  --single-transaction \
+  --routines --triggers --events \
+  --all-databases > test_dump.sql
+
+# 테스트 서버에 리스토어
+mysql -u root -p < test_dump.sql
+mariadb-upgrade -u root -p
+mysqlcheck --all-databases --check -u root -p
+```
+
+**4) 검증 항목**
+
+- [ ] 리스토어 정상 완료
+- [ ] mariadb-upgrade 에러 없음
+- [ ] 주요 테이블 row count 일치
+- [ ] Spring Boot 앱 연결 정상
+- [ ] 주요 CRUD 동작 확인
+- [ ] JOIN 쿼리에서 collation 에러 없음
+- [ ] DATA_SYNC 동작 확인
+
+**산출물:**
+
+- [ ] 테스트 결과 보고서
+- [ ] 이슈 목록 및 해결 방안
+- [ ] 확정된 my.cnf
+
+---
+
+#### Phase 3-1: 명절 전날 사전 작업 (2026-02-16)
+
+**0) 타겟 서버에 Rocky Linux + MariaDB 11.8 설치 및 설정 완료**
+
+**1) A 그룹 (대용량 + 거의 안 변함) 풀 덤프**
+
+```bash
+mysqldump -u root -p --single-transaction \
+  mydb table_a1 table_a2 table_a3 ... > pre_dump_a.sql
+```
+
+**2) B 그룹 (절대 안 변함) 풀 덤프**
+
+```bash
+mysqldump -u root -p --single-transaction \
+  mydb table_b1 table_b2 table_b3 ... > pre_dump_b.sql
+```
+
+**3) 마이그레이션 타겟 서버에 A + B 리스토어**
+
+```bash
+mysql -u root -p < pre_dump_a.sql
+mysql -u root -p < pre_dump_b.sql
+```
+
+---
+
+#### Phase 3-2: D-Day (2026-02-17, 명절 당일)
+
+```
+□ 1. 데이터 유입 중단 확인 (08:00)
+
+□ 2. 애플리케이션 전체 중지
+
+□ 3. A 그룹 델타 덤프 (전날 이후 변경분만)
+     mysqldump -u root -p mydb table_a1 \
+       --where="created_at > '2026-02-16'" > delta_a.sql
+
+□ 4. C 그룹 풀 덤프
+     mysqldump -u root -p --single-transaction \
+       mydb table_c1 table_c2 ... > dump_c.sql
+
+□ 5. 덤프 파일 검증
+     tail -5 delta_a.sql   # "Dump completed" 확인
+     tail -5 dump_c.sql    # "Dump completed" 확인
+
+□ 6. 현행 MariaDB 중지
+     systemctl stop mariadb
+
+□ 7. 타겟 서버에 델타 + C 적용
+     mysql -u root -p < delta_a.sql
+     mysql -u root -p < dump_c.sql
+
+□ 8. 업그레이드 및 검증
+     mariadb-upgrade -u root -p
+     mysqlcheck --all-databases --check -u root -p
+
+□ 9. 데이터 검증
+     - 주요 테이블 row count 비교 (이전 vs 이후)
+     - 핵심 데이터 샘플 확인
+
+□ 10. 애플리케이션 연결 정보 변경 (서버가 변경된 경우)
+
+□ 11. 애플리케이션 시작 및 동작 확인
+
+□ 12. 완료 확인
+```
+
+**롤백 플랜 (문제 발생 시)**
+
+- 신규 서버인 경우: 기존 서버의 MariaDB 10.5를 그대로 재가동
+- 같은 서버인 경우: 백업해둔 데이터 디렉토리 복원 후 MariaDB 10.5 재설치
+
+---
+
+#### Phase 4: 사후 모니터링 (명절 이후 1~2주)
+
+- [ ] 에러 로그 일일 확인: /var/lib/mysql/*.err
+- [ ] 슬로우 쿼리 모니터링
+- [ ] Signal 6 재발 여부 확인
+- [ ] 정상 확인 후 기존 서버/백업 데이터 정리
+
+---
+
+## 2. Community vs Enterprise 비교
+
+### 2.1 기능 비교
+
+|항목|Community (현재)|Enterprise|
+|---|---|---|
+|DB 엔진|MariaDB Server|거의 동일 (추가 테스트 빌드)|
+|기술 지원|없음 (커뮤니티 포럼만)|24x7 전문 엔지니어 + SLA 보장|
+|유지보수 기간|3년|최대 8년|
+|버그 수정|분기별 릴리스 대기|우선 처리 + 커스텀 핫픽스|
+|MaxScale (DB 프록시)|2노드까지 무료|제한 없음|
+|백업 도구|MariaBackup 기본|Enterprise Backup (락 최소화)|
+|감사(Audit)|기본 플러그인|Enterprise Audit (고급)|
+|KMS 연동|미지원|HashiCorp Vault 등 연동|
+|컨설팅/교육|없음|커스텀 교육, 전략 컨설팅|
+
+### 2.2 비용
+
+|플랜|서버당 연간 비용|
+|---|---|
+|Enterprise Standard|$2,500|
+|Enterprise Advanced|$5,000|
+|Enterprise Cluster|$6,500/노드|
+
+※ 서버 대수에 따라 총 비용 산정 필요
+
+### 2.3 검토 의견
+
+**현재 환경(단일 DB)에서는 Community로 충분함.**
+
+Enterprise 전환이 필요한 시점:
+
+- 이중화(HA) 도입 시 MaxScale 3노드 이상 사용 필요
+- 장애 대응 시 SLA 기반 전문 기술지원 필요
+- 유지보수 기간 연장 필요 (3년 → 8년)
+
+---
+
+## 3. 향후 검토 사항: 이중화 (HA)
+
+### 3.1 이중화 구성
+
+```
+[Spring Boot App] → [MaxScale] → [MariaDB Master] (쓰기)
+                      (프록시)  → [MariaDB Slave]  (읽기)
+```
+
+### 3.2 이중화 도입 근거
+
+- 이번 Signal 6 장애는 물리적 corruption (페이지 깨짐)
+- 물리적 corruption은 Master/Slave 간 전파되지 않음
+- 이중화가 있었다면 Master 장애 시 Slave로 자동 전환되어 서비스 중단 없었음
+
+### 3.3 이중화 도입 시 필요 사항
+
+- 서버 최소 3대 (Master + Slave + MaxScale)
+- MaxScale 3노드 이상 시 Enterprise 라이선스 필요
+- 별도 프로젝트로 계획 수립 필요
+
+---
+
+## 4. 전체 타임라인
+
+|시점|작업|비고|
+|---|---|---|
+|명절 전까지|Phase 1: 사전 조사|서비스 영향 없음|
+|명절 전까지|Phase 1.5: 테이블 분류||
+|명절 전까지|Phase 2: 테스트 검증|별도 테스트 서버|
+|2026-02-16 (명절 전날)|Phase 3-1: A+B 그룹 사전 덤프 & 리스토어|서비스 영향 없음|
+|2026-02-17 (명절 당일)|Phase 3-2: 델타 + C 그룹 덤프 & 전환|서비스 중단|
+|명절 이후 1~2주|Phase 4: 사후 모니터링||
