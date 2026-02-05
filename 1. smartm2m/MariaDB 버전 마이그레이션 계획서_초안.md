@@ -157,6 +157,7 @@ sudo dnf install MariaDB-server MariaDB-client
 - binlog_format = ROW
 - character-set-server = utf8mb3
 - collation-server = utf8mb3_general_ci
+- binlog_format = ROW (대표님 지시사항)
 - 기존 innodb 관련 설정 이관
 
 **3) 테스트용 덤프 & 리스토어**
