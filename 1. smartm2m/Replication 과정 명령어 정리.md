@@ -92,6 +92,16 @@ mysqldump \
 |`--routines`|저장 프로시저, 함수 포함|
 |`--triggers`|트리거 포함|
 
+### 2.4 --master-data 옵션 차이
+
+|옵션|결과|
+|---|---|
+|`--master-data=1`|`CHANGE MASTER TO ...` 실행 가능한 형태로 포함|
+|`--master-data=2`|`-- CHANGE MASTER TO ...` 주석으로 포함 (권장)|
+|옵션 없음|binlog position 기록 안 됨|
+
+**Replication 용도면 반드시 `--master-data=2` 필수**
+
 ---
 
 ## 3. 덤프 파일에서 binlog position 확인
@@ -112,29 +122,40 @@ head -30 /home/rocky/master_dump.sql | grep "MASTER_LOG"
 
 ## 4. Slave에 리스토어
 
-### 4.1 리스토어 전 속도 향상 설정 (선택)
+### 4.1 기존 사용자 DB 삭제 (중간에 끊긴 경우)
+
+```sql
+-- 시스템 DB(information_schema, mysql, performance_schema, sys)는 제외
+DROP DATABASE IF EXISTS bctransdb_v2;
+DROP DATABASE IF EXISTS bctransdbx;
+DROP DATABASE IF EXISTS chainportaldb;
+DROP DATABASE IF EXISTS test_db;
+```
+
+### 4.2 리스토어 전 속도 향상 설정 (권장)
+
+**리스토어 전에 반드시 실행 - 2~3배 속도 향상**
 
 ```sql
 SET GLOBAL innodb_flush_log_at_trx_commit = 0;
 SET GLOBAL sync_binlog = 0;
 SET GLOBAL foreign_key_checks = 0;
 SET GLOBAL unique_checks = 0;
-SET sql_log_bin = 0;
 ```
 
-### 4.2 리스토어 실행
+### 4.3 리스토어 실행
 
 ```bash
 sudo mariadb -u root -p < /home/rocky/master_dump.sql
 ```
 
-### 4.3 백그라운드로 리스토어 (세션 끊어도 유지)
+### 4.4 백그라운드로 리스토어 (세션 끊어도 유지 - 권장)
 
 ```bash
 nohup sudo mariadb -u root -p'비밀번호' < /home/rocky/master_dump.sql > /home/rocky/restore.log 2>&1 &
 ```
 
-### 4.4 진행 상황 확인
+### 4.5 진행 상황 확인
 
 ```bash
 tail -f /home/rocky/restore.log
@@ -146,7 +167,7 @@ tail -f /home/rocky/restore.log
 SHOW PROCESSLIST;
 ```
 
-### 4.5 리스토어 완료 후 설정 원복
+### 4.6 리스토어 완료 후 설정 원복 (필수)
 
 ```sql
 SET GLOBAL innodb_flush_log_at_trx_commit = 1;
@@ -154,6 +175,13 @@ SET GLOBAL sync_binlog = 1;
 SET GLOBAL foreign_key_checks = 1;
 SET GLOBAL unique_checks = 1;
 ```
+
+### 4.7 예상 소요 시간 (5GB 기준)
+
+|설정|소요 시간|
+|---|---|
+|기본 설정|30분 ~ 1시간|
+|속도 향상 설정 적용|10분 ~ 20분|
 
 ---
 
@@ -305,7 +333,7 @@ sudo mariadb -u root -p -S /var/lib/mysql/mysql.sock
 ```
 [크래시 전 정상 덤프]
         ↓
-[현재 10.5.9에 리스토어] → 복구 후 새 binlog 시작 (position 0)
+[현재 10.5.9에 리스토어] → 복구 후 새 binlog 시작 (position 4)
         ↓
 [데이터 복구 작업] → binlog에 기록됨
         ↓
