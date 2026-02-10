@@ -42,8 +42,8 @@ LIFETIME(3600);
 
 -- UDF 생성
 CREATE FUNCTION IF NOT EXISTS terminal_to_en AS
-    (code) -> dictGetOrDefault('logs.terminal_dict', 'terminal_name_en', code, code);```
-
+    (code) -> dictGetOrDefault('logs.terminal_dict', 'terminal_name_en', code, code);
+```
 
 ## 목록 조회
 ```
