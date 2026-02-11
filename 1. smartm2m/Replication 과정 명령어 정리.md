@@ -137,10 +137,13 @@ DROP DATABASE IF EXISTS test_db;
 **리스토어 전에 반드시 실행 - 2~3배 속도 향상**
 
 ```sql
+-- 버퍼풀을 4GB로 증가 (가장 효과 큼)
+SET GLOBAL innodb_buffer_pool_size = 4294967296;
+-- 트랜잭션 로그 flush 빈도 줄이기
 SET GLOBAL innodb_flush_log_at_trx_commit = 0;
+-- binlog 매번 fsync 안함
 SET GLOBAL sync_binlog = 0;
-SET GLOBAL foreign_key_checks = 0;
-SET GLOBAL unique_checks = 0;
+ 
 ```
 
 ### 4.3 리스토어 실행
