@@ -12,7 +12,7 @@
 CentOS 7 VM                    Rocky Linux VM
 
 ┌──────────────────┐           ┌──────────────────┐
-│ MariaDB 10.5.9   │──복제──→  │ MariaDB 11.8.x   │
+│ MariaDB 10.5.9   │──복제──→   │ MariaDB 11.8.x   │
 │   (Master)       │  binlog   │   (Slave)        │
 │                  │           │   (read_only)    │
 └──────────────────┘           └──────────────────┘
