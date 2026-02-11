@@ -393,3 +393,14 @@ sudo mariadb -u root -p -S /var/lib/mysql/mysql.sock
 - position 0~3: 파일 헤더 (매직 넘버)
 - position 4부터: 실제 이벤트 시작
 - 첫 이벤트부터 재생하려면 `MASTER_LOG_POS = 4`
+
+
+
+### 진행률 확인
+```
+# GB 단위
+sudo cat /proc/1702/fdinfo/0 | grep pos | awk '{printf "%.2f GB\n", $2/1024/1024/1024}'
+
+# 진행률(%)
+sudo cat /proc/1702/fdinfo/0 | grep pos | awk '{printf "%.2f%%\n", $2/(191*1024*1024*1024)*100}'
+```
