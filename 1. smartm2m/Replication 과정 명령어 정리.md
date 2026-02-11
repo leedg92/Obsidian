@@ -143,7 +143,8 @@ SET GLOBAL innodb_buffer_pool_size = 4294967296;
 SET GLOBAL innodb_flush_log_at_trx_commit = 0;
 -- binlog 매번 fsync 안함
 SET GLOBAL sync_binlog = 0;
- 
+ -- double wti
+SET GLOBAL innodb_doublewrite = OFF;
 ```
 
 ### 4.3 리스토어 실행
