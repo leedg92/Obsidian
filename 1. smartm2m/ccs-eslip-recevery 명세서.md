@@ -69,14 +69,14 @@ E-slip 복구를 외부 복구시스템에 요청하고, 요청 이력을 DB에 
 
 | 필드 | 타입 | 필수 | 설명 |
 |------|------|------|------|
-| parentTaskId | String | Y | 최초 복구 요청의 taskId (부모) |
+| taskId | String | Y | 복구 작업 ID (최초 복구 요청의 taskId) |
 | terminals | String[] | Y | 재처리 대상 터미널 코드 목록 |
 | recoveryBy | String | Y | 재처리 요청자 |
 | recoveryIp | String | Y | 재처리 요청 IP |
 
 ```json
 {
-    "parentTaskId": "84bb2a97-6e14-4c41-8302-a56c6877e7dc",
+    "taskId": "84bb2a97-6e14-4c41-8302-a56c6877e7dc",
     "terminals": ["PNCOC010"],
     "recoveryBy": "tester",
     "recoveryIp": "192.168.1.100"
@@ -85,7 +85,7 @@ E-slip 복구를 외부 복구시스템에 요청하고, 요청 이력을 DB에 
 
 ### Response Body
 
-복구 요청과 동일한 구조 (새로운 taskId 발급) - 이건 화면상 아무데도 쓰이지않음
+복구 요청과 동일한 구조 (새로운 taskId 발급) - 이건 화면에서 쓰이지는 않음
 
 ```json
 {
@@ -281,25 +281,6 @@ E-slip 복구를 외부 복구시스템에 요청하고, 요청 이력을 DB에 
     ]
 }
 ```
-
----
-
-## 터미널 코드 목록
-
-| 코드 | 설명 |
-|------|------|
-| HJNPC010 | 한진부산신항 |
-| PNCOC010 | PNC |
-| HPNTC050 | HPNT |
-| KRLGC030 | 광양 |
-| DPWDC060 | DPWORLD |
-| BNCTC040 | BNCT |
-| HJNPC020 | 한진인천 |
-| HJNPC070 | 한진감천 |
-| BGTIC080 | BGTI |
-| SGCTC090 | SGCT |
-
----
 
 ## 공통 응답 형식
 
