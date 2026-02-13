@@ -67,12 +67,12 @@ E-slip 복구를 외부 복구시스템에 요청하고, 요청 이력을 DB에 
 
 ### Request Body
 
-| 필드 | 타입 | 필수 | 설명 |
-|------|------|------|------|
-| taskId | String | Y | 복구 작업 ID (최초 복구 요청의 taskId) |
-| terminals | String[] | Y | 재처리 대상 터미널 코드 목록 |
-| recoveryBy | String | Y | 재처리 요청자 |
-| recoveryIp | String | Y | 재처리 요청 IP |
+| 필드         | 타입       | 필수  | 설명                          |
+| ---------- | -------- | --- | --------------------------- |
+| taskId     | String   | Y   | 복구 작업 ID (최초 복구 요청의 taskId) |
+| terminals  | String[] | Y   | 재처리 대상 터미널 코드 목록            |
+| recoveryBy | String   | Y   | 재처리 요청자                     |
+| recoveryIp | String   | Y   | 재처리 요청 IP                   |
 
 ```json
 {
