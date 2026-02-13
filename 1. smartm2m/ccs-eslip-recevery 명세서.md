@@ -106,10 +106,10 @@ E-slip 복구를 외부 복구시스템에 요청하고, 요청 이력을 DB에 
 부모 + 자식 task의 복구 결과를 순차적으로 병합하여, 동일 pinNo는 최신 재처리 결과로 덮어쓴다.
 `terminalCode` 파라미터로 전체 또는 특정 터미널의 데이터를 필터링한다.
 
-| 항목 | 내용 |
-|------|------|
-| **Method** | `GET` |
-| **URL** | `/api/recovery/progress?taskId={taskId}&terminalCode={terminalCode}` |
+| 항목         | 내용                                                                   |
+| ---------- | -------------------------------------------------------------------- |
+| **Method** | `GET`                                                                |
+| **URL**    | `/api/recovery/progress?taskId={taskId}&terminalCode={terminalCode}` |
 
 ### Query Parameters
 
