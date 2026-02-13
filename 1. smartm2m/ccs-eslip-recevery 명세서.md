@@ -250,16 +250,16 @@ E-slip 복구를 외부 복구시스템에 요청하고, 요청 이력을 DB에 
 
 ### Response Body
 
-| 필드 | 타입 | 설명 |
-|------|------|------|
-| [].taskId | String | 복구 작업 ID |
-| [].startDateTime | String | 복구 시작 일시 |
-| [].endDateTime | String | 복구 종료 일시 |
-| [].totalCount | int | 복구 대상 건수 |
-| [].recoveryBy | String | 요청자 |
-| [].recoveryIp | String | 요청 IP |
-| [].recoveryAt | String | 요청 시각 |
-| [].retryCount | int | 재처리 횟수 |
+| 필드               | 타입     | 설명                |
+| ---------------- | ------ | ----------------- |
+| [].taskId        | String | 복구 작업 ID          |
+| [].startDateTime | String | 복구 시작 일시          |
+| [].endDateTime   | String | 복구 종료 일시          |
+| [].totalCount    | int    | 복구 대상 건수          |
+| [].recoveryBy    | String | 요청자               |
+| [].recoveryIp    | String | 요청 IP             |
+| [].recoveryAt    | String | 요청 시각             |
+| [].retryCount    | int    | 재처리 횟수            |
 | [].terminalCodes | String | 대상 터미널 코드 (쉼표 구분) |
 
 ```json
