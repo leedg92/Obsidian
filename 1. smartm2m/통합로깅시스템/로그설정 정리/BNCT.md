@@ -86,44 +86,38 @@
 - 변경 후
 ```
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration scan="true" scanPeriod="30 seconds">
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
 
-    <property name="SERVICE_NAME" value="BNCT"/>
-    <property name="LOG_DIR"      value="/app/logs/BNCT"/>
-    <property name="LOG_FILENAME" value="BNCT.log"/>
+    <property name="LOG_PATH_NAME" value="data.log" />
 
-    <logger name="jdbc.sqlonly"        level="OFF" />
-    <logger name="jdbc.sqltiming"      level="INFO" />
-    <logger name="jdbc.resultsettable" level="INFO" />
-    <logger name="jdbc.audit"          level="OFF" />
-    <logger name="jdbc.resultset"      level="OFF" />
-    <logger name="jdbc.connection"     level="OFF" />
+    <!-- SQL Debugger 변수 지정 -->
+    <logger name="jdbc.sqlonly" level="OFF" />
+    <logger name="jdbc.sqltiming" level="info" />
+    <logger name="jdbc.resultsettable" level="info" />
+    <logger name="jdbc.audit" level="OFF" />
+    <logger name="jdbc.resultset" level="OFF" />
+    <logger name="jdbc.connection" level="OFF" />
 
-    <springProperty scope="context" name="DB_DRIVER"   source="remote-db.datasource.driver-class-name" />
-    <springProperty scope="context" name="DB_URL"      source="remote-db.datasource.url" />
-    <springProperty scope="context" name="DB_USER"     source="remote-db.datasource.username" />
+    <springProperty scope="context" name="DB_DRIVER" source="remote-db.datasource.driver-class-name" />
+    <springProperty scope="context" name="DB_URL" source="remote-db.datasource.url" />
+    <springProperty scope="context" name="DB_USER" source="remote-db.datasource.username" />
     <springProperty scope="context" name="DB_PASSWORD" source="remote-db.datasource.password" />
 
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}|${SERVICE_NAME}|%5p|%c{1}|%m%n</pattern>
-        </encoder>
-    </appender>
-
+    <!-- FILE Appender (Filebeat 수집용) -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_DIR}/${LOG_FILENAME}</file>
+        <file>${LOG_PATH_NAME}</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_DIR}/${LOG_FILENAME}.%d{yyyy-MM-dd}.%i</fileNamePattern>
-            <maxHistory>7</maxHistory>
-            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>100MB</maxFileSize>
-            </timeBasedFileNamingAndTriggeringPolicy>
+            <fileNamePattern>${LOG_PATH_NAME}.%d{yyyyMMdd}</fileNamePattern>
+            <maxHistory>60</maxHistory>
         </rollingPolicy>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}|${SERVICE_NAME}|%5p|%C|%M|%L|%m%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}||%5p|%C|%M|%L|%m%n</pattern>
         </encoder>
     </appender>
 
+    <!-- JDBC Appender (커스텀) -->
     <appender name="JDBC" class="com.bnctkorea.bcitt.api.common.CustomJDBCAppender">
         <connectionSource class="ch.qos.logback.core.db.DriverManagerConnectionSource">
             <driverClass>${DB_DRIVER}</driverClass>
@@ -133,6 +127,7 @@
         </connectionSource>
     </appender>
 
+    <!-- Async Appender -->
     <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
         <appender-ref ref="JDBC" />
         <queueSize>500</queueSize>
@@ -140,11 +135,18 @@
         <neverBlock>true</neverBlock>
     </appender>
 
-    <root level="INFO">
-        <appender-ref ref="STDOUT"/>
-        <appender-ref ref="FILE"/>
-        <appender-ref ref="ASYNC"/>
-    </root>
+    <!-- STDOUT Appender (운영 확인용, 클래스명 축약) -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}||%5p|%c{1}|%m%n</pattern>
+        </layout>
+    </appender>
 
+    <root level="INFO">
+        <appender-ref ref="FILE" />
+        <appender-ref ref="STDOUT" />
+        <!-- <appender-ref ref="JDBC" /> -->
+        <appender-ref ref="ASYNC" />
+    </root>
 </configuration>
 ```
