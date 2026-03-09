@@ -17,8 +17,7 @@
 
 ### 3. log4j.xml
 
-Plain Text
-
+- 변경 전
 ```
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE log4j:configuration PUBLIC "-//APACHE//DTD LOG4J 1.2//EN" "https://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/xml/doc-files/log4j.dtd">
@@ -70,6 +69,59 @@ Plain Text
         <priority value="info" />
         <appender-ref ref="file" />
         <!-- <appender-ref ref="jdbc" /> -->
+        <appender-ref ref="ASYNC"/>
+    </root>
+
+</log4j:configuration>
+```
+
+- 변경 후
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration PUBLIC "-//APACHE//DTD LOG4J 1.2//EN" "https://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/xml/doc-files/log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+    <appender name="console" class="org.apache.log4j.ConsoleAppender">
+        <param name="Target" value="System.out" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS}|PNIT|%-5p|%c{1}|%m%n" />
+        </layout>
+    </appender>
+
+    <appender name="file" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="Threshold" value="INFO" />
+        <param name="file" value="/data/log/waslog/bctrans/bctrans.log" />
+        <param name="append" value="true" />
+        <param name="DatePattern" value="'.'yyyy-MM-dd" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS}|PNIT|%-5p|%C|%M|%L|%m%n" />
+        </layout>
+    </appender>
+
+    <appender name="jdbc" class="com.huni.ittblockchain.common.CustomJDBCAppender">
+        <param name="URL" value="jdbc:mysql://133.186.229.131:13306/BPA_TA_LOG?connectionTimeout=10000" />
+        <param name="driver" value="com.mysql.jdbc.Driver" />
+        <param name="user" value="pnit-logger" />
+        <param name="password" value="bpaPNIT01" />
+    </appender>
+
+    <appender name="ASYNC" class="org.apache.log4j.AsyncAppender">
+        <param name="BufferSize" value="500"/>
+        <param name="Blocking" value="false"/>
+        <appender-ref ref="jdbc"/>
+    </appender>
+
+    <logger name="com.huni">
+        <level value="info" />
+    </logger>
+
+    <logger name="org.springframework">
+        <level value="info" />
+    </logger>
+
+    <root>
+        <priority value="info" />
+        <appender-ref ref="file" />
         <appender-ref ref="ASYNC"/>
     </root>
 
