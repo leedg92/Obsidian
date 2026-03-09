@@ -83,23 +83,26 @@
 <!DOCTYPE log4j:configuration PUBLIC "-//APACHE//DTD LOG4J 1.2//EN" "https://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/xml/doc-files/log4j.dtd">
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
 
+    <!-- 콘솔 출력 (운영 확인용, 클래스명 축약) -->
     <appender name="console" class="org.apache.log4j.ConsoleAppender">
         <param name="Target" value="System.out" />
         <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS}|HPNT|%-5p|%c{1}|%m%n" />
+            <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS}||%-5p|%c{1}|%m%n" />
         </layout>
     </appender>
 
+    <!-- 파일 출력 (Filebeat 수집용, 일별 롤링) -->
     <appender name="file" class="org.apache.log4j.DailyRollingFileAppender">
         <param name="Threshold" value="INFO" />
         <param name="file" value="/Users/ongdv/Documents/pnit_log/test-bctrans.log" />
         <param name="append" value="true" />
         <param name="DatePattern" value="'.'yyyy-MM-dd" />
         <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS}|HPNT|%-5p|%C|%M|%L|%m%n" />
+            <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS}||%-5p|%C|%M|%L|%m%n" />
         </layout>
     </appender>
 
+    <!-- DB 저장 (기존 CustomJDBCAppender 유지) -->
     <appender name="jdbc" class="com.huni.ittblockchain.common.CustomJDBCAppender">
         <param name="URL" value="jdbc:mysql://133.186.229.131:13306/BPA_TA_LOG?connectionTimeout=10000" />
         <param name="driver" value="com.mysql.jdbc.Driver" />
@@ -107,6 +110,7 @@
         <param name="password" value="bpaHPNT04" />
     </appender>
 
+    <!-- JDBC 비동기 처리 (성능 보호) -->
     <appender name="ASYNC" class="org.apache.log4j.AsyncAppender">
         <param name="BufferSize" value="500"/>
         <param name="Blocking" value="false"/>
@@ -123,7 +127,9 @@
 
     <root>
         <priority value="info" />
+        <!-- <appender-ref ref="console" /> -->
         <appender-ref ref="file" />
+        <!-- <appender-ref ref="jdbc" /> -->
         <appender-ref ref="ASYNC"/>
     </root>
 
