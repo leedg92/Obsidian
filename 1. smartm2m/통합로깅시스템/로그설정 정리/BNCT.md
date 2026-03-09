@@ -110,7 +110,7 @@
         </encoder>
     </appender>
 
-    <appender name="File" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_DIR}/${LOG_FILENAME}</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${LOG_DIR}/${LOG_FILENAME}.%d{yyyy-MM-dd}.%i</fileNamePattern>
@@ -124,9 +124,26 @@
         </encoder>
     </appender>
 
+    <appender name="JDBC" class="com.bnctkorea.bcitt.api.common.CustomJDBCAppender">
+        <connectionSource class="ch.qos.logback.core.db.DriverManagerConnectionSource">
+            <driverClass>${DB_DRIVER}</driverClass>
+            <url>${DB_URL}</url>
+            <user>${DB_USER}</user>
+            <password>${DB_PASSWORD}</password>
+        </connectionSource>
+    </appender>
+
+    <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="JDBC" />
+        <queueSize>500</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <neverBlock>true</neverBlock>
+    </appender>
+
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
-        <appender-ref ref="File"/>
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="ASYNC"/>
     </root>
 
 </configuration>
