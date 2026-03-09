@@ -83,11 +83,10 @@
 <!DOCTYPE log4j:configuration PUBLIC "-//APACHE//DTD LOG4J 1.2//EN" "https://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/xml/doc-files/log4j.dtd">
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
 
-    <!-- 콘솔 출력 (운영 확인용, 클래스명 축약) -->
     <appender name="console" class="org.apache.log4j.ConsoleAppender">
         <param name="Target" value="System.out" />
         <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS}||%-5p|%c{1}|%m%n" />
+            <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p: %c - %m%n" />
         </layout>
     </appender>
 
