@@ -105,7 +105,7 @@
     <springProperty scope="context" name="DB_USER" source="remote-db.datasource.username" />
     <springProperty scope="context" name="DB_PASSWORD" source="remote-db.datasource.password" />
 
-    <!-- FILE Appender (Filebeat 수집용) -->
+    <!-- 파일 출력 (Filebeat 수집용, 일별 롤링) -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_PATH_NAME}</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
@@ -117,7 +117,7 @@
         </encoder>
     </appender>
 
-    <!-- JDBC Appender (커스텀) -->
+    <!-- DB 저장 (기존 CustomJDBCAppender 유지) -->
     <appender name="JDBC" class="com.bnctkorea.bcitt.api.common.CustomJDBCAppender">
         <connectionSource class="ch.qos.logback.core.db.DriverManagerConnectionSource">
             <driverClass>${DB_DRIVER}</driverClass>
@@ -127,7 +127,7 @@
         </connectionSource>
     </appender>
 
-    <!-- Async Appender -->
+    <!-- JDBC 비동기 처리 (성능 보호) -->
     <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
         <appender-ref ref="JDBC" />
         <queueSize>500</queueSize>
@@ -135,10 +135,9 @@
         <neverBlock>true</neverBlock>
     </appender>
 
-    <!-- STDOUT Appender (운영 확인용, 클래스명 축약) -->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <layout class="ch.qos.logback.classic.PatternLayout">
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}||%5p|%c{1}|%m%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%-5p] [%F] %M \(%L\) : %m%n</pattern>
         </layout>
     </appender>
 
