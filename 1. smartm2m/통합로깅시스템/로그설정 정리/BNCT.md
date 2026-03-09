@@ -16,7 +16,5 @@
 
 ### 3. logback-spring.xml
 
-Plain Text
-
 ```
 <?xml version="1.0" encoding="UTF-8"?><configuration>    <include resource="org/springframework/boot/logging/logback/defaults.xml" />    <include resource="org/springframework/boot/logging/logback/console-appender.xml" />    <property name="LOG_PATH_NAME" value="data.log" />    <!-- SQL Debugger 변수 지정 -->    <logger name="jdbc.sqlonly" level="OFF" />    <logger name="jdbc.sqltiming" level="info" />    <logger name="jdbc.resultsettable" level="info" />    <logger name="jdbc.audit" level="OFF" />    <logger name="jdbc.resultset" level="OFF" />    <logger name="jdbc.connection" level="OFF" />    <springProperty scope="context" name="DB_DRIVER" source="remote-db.datasource.driver-class-name" />    <springProperty scope="context" name="DB_URL" source="remote-db.datasource.url" />    <springProperty scope="context" name="DB_USER" source="remote-db.datasource.username" />    <springProperty scope="context" name="DB_PASSWORD" source="remote-db.datasource.password" />    <!-- FILE Appender -->    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppen
