@@ -1,4 +1,4 @@
-# HJNC
+
 - 변경 전
 ```
 <?xml version="1.0" encoding="UTF-8"?>
