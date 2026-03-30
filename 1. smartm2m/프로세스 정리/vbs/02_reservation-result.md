@@ -9,11 +9,6 @@ bctrans에서 예약정보 DB 업데이트 → allcone에서 TransLog 저장 + F
 
 ```mermaid
 
----
-config:
-  theme: dark
----
-
 flowchart TD
     START(["예약결과 수신"]) --> QUERY["수신된 pinNo로
     기존 오더 조회"]

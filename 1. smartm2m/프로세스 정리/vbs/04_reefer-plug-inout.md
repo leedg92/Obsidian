@@ -9,10 +9,6 @@ bctrans에서 냉컨 전원 이력 저장 → allcone에서 게이트인 여부�
 
 ```mermaid
 
----
-config:
-  theme: dark
----
 
 flowchart TD
     START(["냉컨 Plug In/Out 수신"]) --> QUERY["수신된 terminalCode + docKey로

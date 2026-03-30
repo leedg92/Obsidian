@@ -9,10 +9,6 @@ bctrans에서 운송오더 삭제 처리 → allcone에서 삭제 알림 FCM 푸
 
 ```mermaid
 
----
-config:
-  theme: dark
----
 
 flowchart TD
     START(["COPINO 삭제 수신"]) --> REMOVE["수신된 COPINO 삭제 요청으로

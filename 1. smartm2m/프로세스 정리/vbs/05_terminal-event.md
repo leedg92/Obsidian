@@ -25,10 +25,6 @@ bctrans에서 상태 업데이트 + 부가 처리 → allcone에서 인수도증
 
 ```mermaid
 
----
-config:
-  theme: dark
----
 
 flowchart TD
     START(["터미널 이벤트 수신"]) --> PARSE["수신된 latestStatusTime 파싱
