@@ -42,19 +42,6 @@ cp global/.claude/personas/*.md ~/.claude/personas/
 
 ---
 
-## 새 프로젝트 시작할 때
-
-```bash
-# 1. 프로젝트 루트에서
-cp project-template/CLAUDE.md ./CLAUDE.md
-cp -r project-template/.review-context ./.review-context
-
-# 2. CLAUDE.md에 프로젝트 정보 채우기
-vi CLAUDE.md
-```
-
----
-
 ## 작업별 디렉토리 생성
 
 ```bash
