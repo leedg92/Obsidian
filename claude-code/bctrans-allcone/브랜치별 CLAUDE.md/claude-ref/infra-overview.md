@@ -1,0 +1,205 @@
+# 인프라 구성 및 프로세스 흐름
+
+## 시스템 구성
+
+| 시스템                            | 통칭      | 관리 주체    | 터미널 내/외    | 설명                           |
+| ------------------------------ | ------- | -------- | ---------- | ---------------------------- |
+| BaaS (Blockchain as a Service) | 블록체인    | smartm2m | 외부         | 운송 데이터 중계 + 고유키 발급           |
+| Terminal Operating System      | TOS     | 각 터미널    | 내부         | 터미널 운영 시스템 (컨테이너/선박/야드 관리)   |
+| Terminal Agent                 | TA      | smartm2m | 내부         | TOS ↔ 블록체인 연결 어댑터. 터미널마다 1개씩 |
+| BCtrans/Allcone Backend        | bctrans | 컨테인어스    | 외부         | 운송오더 DB 관리 + 앱 알림 발송 서버      |
+| Allcone 모바일 앱                  | 앱       | 컨테인어스    | 외부 (클라이언트) | 운송기사/관리자용 모바일 앱              |
+
+## 핵심 용어
+
+### 망 구분
+
+| 구분 | 통칭 | 설명 |
+|------|------|------|
+| EDI망 (VBS) | VBS | 운송사 ↔ 중계사(KTNET) ↔ 터미널 간 데이터 교환 네트워크 |
+| 블록체인 망 (TSS) | TSS | 운송사 ↔ BaaS ↔ TA 간 데이터 교환 네트워크 |
+
+- 두 망의 역할은 동일 (운송 데이터 중계), **경유하는 인프라가 다를 뿐**
+- KTNET/KLNET: EDI망의 중계사. 운송오더를 EDI 표준 형식으로 변환하여 터미널에 전송
+
+### 운송 관련
+
+| 용어            | 설명                                                                              |
+| ------------- | ------------------------------------------------------------------------------- |
+| COPINO        | 운송사가 요청한 운송건. 운송오더와 동의어                                                         |
+| e-Slip (인수도증) | 터미널에서 발급하는 전자 인수도증. 게이트 진입시 어디로 가서 뭘 실어야 될지 알려줌                                 |
+| PIN_NO        | EDI망(VBS)에서 BaaS가 발급하는 운송건 고유키(`컨테이너번호_차량번호_반출입(1 or 2)_YYMMDD_seq(순차적으로 올라감)`) |
+| DOC_KEY       | 블록체인 망(TSS)에서 BaaS가 발급하는 운송건 고유키(`선사_blNo(선하증권)_컨테이너번호`)                        |
+
+### 서비스 구분
+
+| 서비스                           | 설명                                                                                        |
+| ----------------------------- | ----------------------------------------------------------------------------------------- |
+| VBS (Vehicle Booking Service) | 운송예약서비스. 기사가 터미널에 "언제 갈 것이다"를 예약. EDI망을 통한 일반 운송건의 통칭으로도 사용됨                              |
+| TSS (== ITT)                  | 환적 운송. 반출 터미널 → 반입 터미널로 컨테이너를 이동하는 운송 방식. EDI망의 COPINO 두 건(반출+반입)을 블록체인 망에서 하나로 묶은 논리적 개념 |
+| 그룹오더 (Group Order)            | TSS를 여러 차량 × 여러 컨테이너로 묶은 단위. 어떤 차량이 어떤 컨테이너를 반출할지는 **반출 터미널 진입 시점에 결정**                   |
+
+## 인프라간 프로세스 흐름
+
+### 공통 원칙
+
+- **고유키를 만드는 것은 항상 BaaS**. 최초에 BaaS에 고유키 생성을 요청하는 방식만 다를 뿐, 이후 무브먼트는 동일하게 처리
+- **최초 운송오더 생성 이후**, 터미널 내 무브먼트(게이트인 ~ 게이트아웃)는 VBS/TSS 관계없이 동일한 패턴으로 반복
+
+### 1. 기본 운송건 — EDI망 (VBS)
+
+운송사가 EDI망을 통해 COPINO를 전송하고, 터미널에서 운송이 진행되는 기본 흐름.
+
+```mermaid
+flowchart TD
+    subgraph 최초["최초 운송오더 생성"]
+        A1["① 운송사 → EDI망(KTNET/KLNET) → TOS
+        COPINO 전송"]
+        A2["② TA가 TOS의 도착 정보를 읽음
+        (MQ / API / Batch Query)"]
+        A3["③ TA → BaaS
+        정제된 정보 전송"]
+        A4["④ BaaS에서 고유키(PIN_NO) 생성
+        → TA, bctrans에 invoke alarm"]
+        A5["⑤ TA: 인터페이스 테이블에 기록"]
+        A6["⑥ bctrans: DB 기록 → 앱에 알림"]
+
+        A1 --> A2 --> A3 --> A4
+        A4 --> A5
+        A4 --> A6
+    end
+
+    subgraph 무브먼트["무브먼트 반복 (게이트인 ~ 게이트아웃)"]
+        M1["TOS에서 운송 이벤트 발생
+        (GateIn / BlockIn / JobDone / GateOut 등)"]
+        M2["TA가 이벤트를 읽음"]
+        M3["TA: 인터페이스 테이블 갱신
+        + BaaS로 전송"]
+        M4["BaaS → bctrans에 invoke alarm"]
+        M5["bctrans: 상태 업데이트 → 앱에 알림"]
+
+        M1 --> M2 --> M3 --> M4 --> M5
+    end
+
+    최초 --> 무브먼트
+```
+
+> bctrans 진입점: `POST /vbs/invoke/alarm` → `VbsInvokeAlarmController`
+
+### 2. TSS 단건 — 블록체인 망 (TSS)
+
+운송사가 블록체인 망을 통해 TSS(반출+반입 묶음) 운송건을 생성하는 흐름.
+
+```mermaid
+
+flowchart TD
+    subgraph 최초["최초 운송오더 생성"]
+        B1["① 운송사 → BaaS
+        TSS 정보(COPINO 두 쌍) 전송
+        → TA, bctrans에 CreateCopino alarm"]
+        B2["② TA, bctrans → BaaS
+        GetCopino 요청으로 COPINO 상세 조회"]
+        B3["③ TA: MIG 파일로 변환 → TOS 전송"]
+        B4["④ TOS: MIG 파일 읽어 마스터 테이블 기록"]
+        B5["⑤ bctrans: DB 기록 → 앱에 알림"]
+
+        B1 --> B2
+        B2 --> B3 --> B4
+        B2 --> B5
+    end
+
+    subgraph 무브먼트["무브먼트 반복 (게이트인 ~ 게이트아웃)"]
+        direction TB
+        N1["기본 운송건(VBS)의
+        무브먼트 반복과 동일한 패턴"]
+        N2["TOS 이벤트 → TA(인터페이스 테이블 갱신 + BaaS 전송)
+        → BaaS → bctrans invoke alarm"]
+
+        N1 --> N2
+    end
+
+    최초 --> 무브먼트
+```
+
+> - BaaS가 발급하는 고유키는 **DOC_KEY**
+> - bctrans 진입점: `POST /itt/invoke/alarm` → `IttInvokeAlarmController`
+> - TSS는 반출/반입 두 터미널을 오가므로 무브먼트가 **반출 게이트인 ~ 반출 게이트아웃 ~ 반입 게이트인 ~ 반입 게이트아웃**까지 이어짐
+
+### 3. TSS 그룹오더 — 블록체인 망 (TSS)
+
+여러 차량 × 여러 컨테이너를 묶어 관리하는 그룹 운송 흐름.
+그룹오더는 **bctrans가 오케스트레이션** 역할을 수행.
+
+```mermaid
+
+flowchart TD
+    subgraph 생성["그룹오더 생성"]
+        C1["① 운송사(TMS) → bctrans
+        POST /tss/group/trucker/create
+        컨테이너 목록 + 트럭 목록 전달"]
+        C2["② bctrans → BaaS
+        CreateCopinoWithGroup 요청
+        → 컨테이너별 DOC_KEY 발급"]
+        C3["③ bctrans: DB 저장
+        (Master / Container / Truck)"]
+        C4["④ bctrans → TA
+        터미널 검증 요청"]
+
+        C1 --> C2 --> C3 --> C4
+    end
+
+    subgraph 시작["그룹오더 시작"]
+        D1["⑤ bctrans → TA
+        StartGroupOrder 알림 전송"]
+        D2["⑥ TA → BaaS
+        GetGroupCopino 요청
+        → 컨테이너 정보 조회"]
+        D3["⑦ TA: MIG 파일 → TOS 전달"]
+        D4["⑧ bctrans: 미배차 트럭에
+        임시 배차 → 기사 앱 알림"]
+
+        D1 --> D2 --> D3
+        D1 --> D4
+    end
+
+    subgraph 진입["차량 진입 → 컨테이너 할당"]
+        E1["⑨ 트럭이 반출 터미널 진입"]
+        E2["⑩ TA → BaaS → bctrans
+        GroupOrderGateIn alarm"]
+        E3["⑪ bctrans → BaaS
+        GetCopino(FR/TO) 조회
+        → 실제 컨테이너 정보 확정"]
+        E4["⑫ bctrans: 임시 오더를
+        실제 오더로 교체 (백업 후 갱신)"]
+
+        E1 --> E2 --> E3 --> E4
+    end
+
+    subgraph 무브먼트["무브먼트 반복"]
+        F1["이후 TSS 단건과 동일한
+        무브먼트 패턴으로 진행"]
+        F2["컨테이너 완료 시
+        → 그룹 내 다음 컨테이너 배차
+        (nextJob)"]
+
+        F1 --> F2
+    end
+
+    생성 --> 시작 --> 진입 --> 무브먼트
+```
+
+> - 그룹오더에서 bctrans가 중간에 끼는 이유: **여러 컨테이너를 하나의 dispatchGroup으로 묶는 전처리** + BaaS에 묶음 COPINO 생성 요청 등의 오케스트레이션
+> - 컨테이너 할당은 반출 터미널 진입 시점에 결정되므로, 그 전까지 기사 앱에는 `"진입 시 할당"` 표시
+
+## 참고: bctrans 진입점 요약
+
+| 망 | 진입점 | Controller |
+|----|--------|------------|
+| EDI망 (VBS) | `POST /vbs/invoke/alarm` | `VbsInvokeAlarmController` |
+| 블록체인 망 (TSS) | `POST /itt/invoke/alarm` | `IttInvokeAlarmController` |
+| 그룹오더 관리 | `POST /tss/group/*` | `TssGroupOrderController` |
+
+## 이벤트별 상세 플로우
+
+- EDI망(VBS) 이벤트 상세: [docs/vbs-flow/](vbs-flow/README.md)
+- 블록체인 망(TSS) 이벤트 상세: docs/tss-flow/ (작성 예정)
