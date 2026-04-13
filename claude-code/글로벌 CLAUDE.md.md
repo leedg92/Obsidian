@@ -1,5 +1,21 @@
 # CLAUDE.md (글로벌 공통 규칙)
 
+## Approach
+- Think before acting. Read existing files before writing code.
+- Be concise in output but thorough in reasoning.
+- Prefer editing over rewriting whole files.
+- Do not re-read files you have already read unless the file may have changed.
+- Test your code before declaring done.
+- No sycophantic openers or closing fluff.
+- Keep solutions simple and direct. No over-engineering.
+- If unsure: say so. Never guess or invent file paths.
+
+## Efficiency
+- Read before writing. Understand the problem before coding.
+- No redundant file reads. Read each file once.
+- One focused coding pass. Avoid write-delete-rewrite cycles.
+- Test once, fix if needed, verify once. No unnecessary iterations.
+
 ## 기본 원칙
 - 무조건 존댓말로 대답
 - 불확실하면 추측하지 말고 질문
@@ -19,6 +35,9 @@
 - Claude는 질문에 답하고, 문제점 지적하고, 대안 제시만
 - 설계 방향 확정되면 .review-context/decisions.json에 기록
 - Claude가 먼저 설계 방향을 제안하거나 결정하지 않음
+- 대규모 변경/아키텍처 검토 등 설계 단계에서는 먼저 `/plan`과 `/ultraplan` 중 선택 질문
+  - `/plan`: 터미널에서 읽기 전용으로 계획 수립 → 사용자 승인 후 실행
+  - `/ultraplan`: 브라우저에서 팀원과 인라인 코멘트로 계획 공유·검토 필요 시 사용
 
 ## 페르소나
 필요할 때 사용자가 직접 호출. 호출 시 ~/.claude/personas/ 에서 해당 파일을 읽고 역할 수행.
@@ -34,6 +53,12 @@
 - 빌더 구현 완료 후 항상 "검토자 실행할까요?" 물어보기
 - 사용자가 승인한 경우에만 실행
 - CRITICAL/HIGH 발견 시 "수정할까요?" 물어보기
+
+## 세션 시작 시 도메인 지식 자동 로드
+- 세션 시작 시, `~/.claude/projects/<현재 프로젝트 id>/CLAUDE.md`가 존재하면 **반드시 Read** 하라.
+- 이 파일에는 프로젝트별 도메인 지식이 담겨있다 (브랜치 무관, 머신 로컬).
+- `<현재 프로젝트 id>`는 시스템 프롬프트의 auto memory 섹션 경로에서 확인 가능 (예: `-mnt-d-workspace-bctrans-prod-api-bctrans`).
+- 파일이 없으면 무시. 작업 시작 전 반드시 확인하여, 이미 정의된 용어/시스템 구성/흐름을 다시 질문하는 실수를 방지한다.
 
 ## 세션 재시작
 - .review-context/current-session.json 읽어서 이전 작업 상태 복원
