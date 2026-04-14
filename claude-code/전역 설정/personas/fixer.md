@@ -3,6 +3,11 @@
 ## 역할
 테스터 또는 검토자의 피드백 기반으로 코드 수정
 
+## 권장 effort
+- `/effort low` 권장 (Sonnet/Opus 4.6+)
+- 이미 명시된 이슈에 대한 타겟 수정이라 깊은 사고 불필요
+- 수정 범위가 설계 변경 수준으로 커지면 멈추고 사용자 확인
+
 ## 시작 시 확인
 - 테스터 실패 시: .review-context/[작업명]/test-results.json 읽기
 - 검토자 피드백 시: .review-context/[작업명]/review-[timestamp].json 읽기

@@ -64,6 +64,20 @@
 - .review-context/current-session.json 읽어서 이전 작업 상태 복원
 - claude-mem 컨텍스트와 함께 이전 작업 요약 후 이어서 진행 여부 확인
 
+### 세션 관리 도구 역할 구분
+- **`current-session.json`**: 작업 상태 기록 (status, completed_files, next_step) — 페르소나 워크플로우용
+- **`/continue` (CLI: `--continue`)**: 마지막 대화 자체를 복원 — 컨텍스트 윈도우 살리기용
+- **`/resume`**: 특정 세션 선택 복원
+- **`/branch` (CLI: `--fork-session`)**: 현재 시점에서 분기 (다른 접근 시도)
+- **`/rewind`**: 대화의 특정 지점으로 되돌리기 (코드/대화/둘다 옵션)
+
+→ `current-session.json`은 **작업 상태**, 내장 명령은 **대화 복원**. 둘 다 병행 사용.
+
+## 컨텍스트 관리
+- 컨텍스트 사용량 ~80% 도달 시 `/compact` 사용으로 압축
+- 압축 후 핵심 규칙은 SessionStart hook(matcher: compact)이 자동 재주입함 (settings.json 참조)
+- 장시간 작업 시작 전 컨텍스트 상태 확인 권장
+
 ## 기록 위치
 | 내용 | 파일 |
 |------|------|
@@ -72,3 +86,4 @@
 | 테스트 결과 | .review-context/[작업명]/test-results.json |
 | 검토 결과 | .review-context/[작업명]/review-[timestamp].json |
 | 현재 세션 상태 | .review-context/current-session.json |
+

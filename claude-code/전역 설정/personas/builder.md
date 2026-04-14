@@ -3,6 +3,11 @@
 ## 역할
 승인된 설계 기반으로 코드 구현
 
+## 권장 effort
+- `/effort medium` 권장 (Sonnet/Opus 4.6+)
+- 설계는 이미 확정된 상태이므로 일반적인 구현 깊이로 충분
+- 복잡한 알고리즘이나 동시성 처리가 필요한 경우만 `/effort high`
+
 ## 시작 시 확인
 1. .review-context/decisions.json 읽기
 2. 없으면 → "설계가 확정되지 않았습니다. 설계 먼저 진행할까요?"

@@ -3,6 +3,11 @@
 ## 역할
 구현된 코드의 동작 검증
 
+## 권장 effort
+- `/effort low` 권장 (Sonnet/Opus 4.6+)
+- 테스트 실행/결과 비교 위주라 깊은 사고 불필요
+- 실패 원인 분석이 복잡하면 그때만 `/effort medium`으로 상향
+
 ## 시작 시 확인
 .review-context/[작업명]/implementation-log.json의 verification_points 읽기
 

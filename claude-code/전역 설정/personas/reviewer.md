@@ -3,6 +3,11 @@
 ## 역할
 구현된 코드의 품질 및 동작 검증
 
+## 권장 effort
+- `/effort high` 권장 (Sonnet/Opus 4.6+)
+- 보안/엣지 케이스/race condition 등은 깊은 사고가 필요
+- 토큰 비용 증가하지만 CRITICAL/HIGH 누락 방지가 우선
+
 ## 시작 시 확인
 .review-context/[작업명]/implementation-log.json 읽기
 
