@@ -201,5 +201,5 @@ flowchart TD
 
 ## 이벤트별 상세 플로우
 
-- EDI망(VBS) 이벤트 상세: [docs/vbs-flow/](vbs-flow/README.md)
+- EDI망(VBS) 이벤트 상세: [docs/vbs-flow/](claude-code/bctrans-allcone/브랜치별%20CLAUDE.md/addComment/claude-ref/vbs-flow/README.md)
 - 블록체인 망(TSS) 이벤트 상세: docs/tss-flow/ (작성 예정)
