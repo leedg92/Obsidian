@@ -7,7 +7,7 @@ BaaS에서 `POST /vbs/invoke/alarm`으로 수신되는 VBS(EDI망) 이벤트별 
 모든 이벤트는 `VbsInvokeAlarmController.invokeComplete()`를 통해 진입합니다.
 serverName 설정에 따라 bctrans(DB 저장) → allcone(FCM 푸시) 순서로 처리됩니다.
 
-- [공통 진입점 (invoke/alarm)](claude-code/bctrans-allcone/브랜치별%20CLAUDE.md/addComment/claude-ref/vbs-flow/invoke-alarm-entry.md)
+- [공통 진입점 (invoke/alarm)](claude-code/bctrans-allcone/branch/addComment/claude-ref/vbs-flow/invoke-alarm-entry.md)
 
 ## 이벤트별 플로우
 
@@ -17,7 +17,7 @@ serverName 설정에 따라 bctrans(DB 저장) → allcone(FCM 푸시) 순서로
 | 예약결과 | `ReservationResult` | [ReservationResult.md](ReservationResult.md) |
 | COPINO 삭제 | `RemoveCopino` | [RemoveCopino.md](RemoveCopino.md) |
 | 냉컨 Plug In/Out | `ReeferPlugInOutResult` | [ReeferPlugInOutResult.md](ReeferPlugInOutResult.md) |
-| 터미널 이벤트 | `GateIn`, `EnterBlock`, `JobDone`, `GateOut`, `CancelInOut`, ... | [TerminalEvent.md](claude-code/bctrans-allcone/브랜치별%20CLAUDE.md/addComment/claude-ref/vbs-flow/TerminalEvent.md) |
+| 터미널 이벤트 | `GateIn`, `EnterBlock`, `JobDone`, `GateOut`, `CancelInOut`, ... | [TerminalEvent.md](claude-code/bctrans-allcone/branch/addComment/claude-ref/vbs-flow/TerminalEvent.md) |
 
 ## 관련 소스 파일
 
