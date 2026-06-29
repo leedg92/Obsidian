@@ -9,7 +9,7 @@
 		- CreateCopino
 		- GateIn
 		- EnterBlock
-		- 
+		- JobDone
+		- GateOut
 		- UpdateTransStatus
-		- 
 		- OnAutoBlockReadyRequired
