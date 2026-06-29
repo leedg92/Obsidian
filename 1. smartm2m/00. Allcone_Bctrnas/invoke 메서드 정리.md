@@ -6,4 +6,10 @@
 		- CreateGroup
 		- UpdateGroupTransStatus
 	- 사용
+		- CreateCopino
+		- GateIn
+		- EnterBlock
+		- 
 		- UpdateTransStatus
+		- 
+		- OnAutoBlockReadyRequired
