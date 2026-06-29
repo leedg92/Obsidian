@@ -3,4 +3,7 @@
 		- StartGroupOrder
 		- RestartGroupOrder
 		- CreateShippingOrderList
-	- 
+		- CreateGroup
+		- UpdateGroupTransStatus
+	- 사용
+		- UpdateTransStatus
